@@ -48,3 +48,6 @@ https://arxiv.org/pdf/2109.06605.pdf
 
 Visually Grounded Reasoning across Languages and Cultures
 https://arxiv.org/pdf/2109.13238.pdf
+
+Improving language models by retrieving from trillions of tokens
+https://arxiv.org/pdf/2112.04426.pdf
