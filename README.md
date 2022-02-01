@@ -19,13 +19,8 @@ The question here is "Is external knowledge -described in other documents- benef
 Recently, similar ideas have been examined in the context of LM pre-training (https://arxiv.org/abs/2112.04426), where retrieving "relevant" sentences seems to improve LM performance. But, in general, it seems natural to exploit relevant sources (documents) to resolve document classification tasks. For example, legal professionals (lawyers, judges) always consider the relevant legislation and case-law when they want to predict the outcome of a legal case, while we currently focus on models that only consider the facts of the case.
 Based on this idea, we could examine how we could better (but also efficiently) encode relevant documents to improve the performance in legal judgment prediction.
 
-A deeper dive (analysis) on what leads to group disparities in legal NLP tasks
 
-Main Topic: Fairness / Robustness
-We recently released a benchmark for fairness in legal NLP tasks (see the confidential pre-print attached). We showcased reasonable group performance disparities in several tasks w.r.t. to several attributes.  We examined several group-robust methods that are supposed to improve fairness by mitigating group performance disparities, but they seem to not work consistently or not at all in several cases. We failed to answer why this happens and what we could do about it. 
-I think it would make sense to consider how different factors (distributional swifts, labelling inconsistency, or whatsoever) potentially affect the results. In many cases, maybe specific legal systems or courts are indeed unfair and treats several groups harsher (unequal), e.g., men vs. women, or eastern European countries vs. western, but maybe in other cases, it’s all (or in a large degree) about representation disparities (more or less data for some groups) or other reasons that affect the learning process.
-We could probably examine how results and group-robust methods efficacy differ in different settings to approach and understand these issues.
-
+https://arxiv.org/pdf/2010.00711.pdf
 
 
 # Literature Review 
