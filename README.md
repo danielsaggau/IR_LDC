@@ -7,12 +7,6 @@ Main topic: Explainability
 I recently moved a bit to this direction for the very first time in this paper (https://aclanthology.org/2021.naacl-main.22/), where we examine rationale extraction on ECtHR cases, but recently two more datasets have been published (ILDC: https://aclanthology.org/2021.acl-long.313/, ContractNLI: https://aclanthology.org/2021.findings-emnlp.164/), which are annotated with both relevant labels and rationales (sentences that indicate the right label).
 I guess a first goal here would be to consider recent advances in this topic (explainability / rationale extraction) and compare different methods across these datasets / tasks. We could even consider more classic methods, like LIME, that I skipped in this work.
 
-An evaluation framework for probing abstract legal NLU
-Main topic: Legal NLU /  Probing
-The question here is "In which degree pre-trained language models (LMs), generic or legal-oriented, "understand" legal text? What kind of legal knowledge they hold? How can we estimate this?".
-Here, we should first define a set of "probing" tasks (LM-based, or sentence retrieval) that somehow quantify this quality (legal language understanding). Of course, we’ll have to collaborate and learn a lot from people studying law. 
-Then we could evaluate and analyse the performance of different models, generic ones (e.g., RoBERTa) or legal-oriented (Legal-BERT, CaseLaw-BERT).
-
 Retrieval-enhanced Legal Document Classification
 Main Topic: Multi-Document Classification 
 The question here is "Is external knowledge -described in other documents- beneficial for legal document classification? How we could effectively model relevant documents and their relation with the target document (the one to be classified)?"
