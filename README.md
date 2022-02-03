@@ -25,6 +25,12 @@ https://aclanthology.org/2021.acl-long.213.pdf
 
 https://arxiv.org/pdf/2010.00711.pdf
 
+https://sites.ualberta.ca/~rabelo/COLIEE2022/
+
+https://aclanthology.org/2021.nllp-1.13.pdf
+
+https://nllpw.org/workshop/program/
+
 
 # Literature Review 
  
