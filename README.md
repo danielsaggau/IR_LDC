@@ -1,4 +1,6 @@
-# thesis
+# Thesis
+
+# Ilias RQ: 
 
 Retrieval-enhanced Legal Document Classification
 Main Topic: Multi-Document Classification 
@@ -7,6 +9,8 @@ Recently, similar ideas have been examined in the context of LM pre-training (ht
 Based on this idea, we could examine how we could better (but also efficiently) encode relevant documents to improve the performance in legal judgment prediction.
 
 Mina Links: 
+
+## Finding a divergence learning metric
 
 https://proceedings.neurips.cc/paper/2020/file/c928d86ff00aeb89a39bd4a80e652a38-Paper.pdf
 
@@ -35,7 +39,6 @@ https://aclanthology.org/2021.eacl-main.39.pdf
 
 Parameter-Efficient Transfer Learning for NLP
 http://proceedings.mlr.press/v97/houlsby19a/houlsby19a.pdf
-
 
 EXT5: TOWARDS EXTREME MULTI-TASK SCALING FOR TRANSFER LEARNING
 https://arxiv.org/pdf/2111.10952.pdf
