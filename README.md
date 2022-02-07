@@ -8,8 +8,9 @@ Based on this idea, we could examine how we could better (but also efficiently) 
 
 Mina Links: 
 
+https://proceedings.neurips.cc/paper/2020/file/c928d86ff00aeb89a39bd4a80e652a38-Paper.pdf
 
-
+https://arxiv.org/pdf/1704.00454.pdf
 
 Matthias Legal NLP General Info Links: 
 
@@ -27,7 +28,7 @@ https://aclanthology.org/2021.nllp-1.7.pdf
 
 https://ostendorff.org/assets/pdf/ostendorff2021a.pdf
 
-# Literature Review 
+# General Interest Literature Review 
  
 AdapterFusion: Non-Destructive Task Composition for Transfer Learning
 https://aclanthology.org/2021.eacl-main.39.pdf
