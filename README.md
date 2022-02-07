@@ -8,22 +8,6 @@ https://proceedings.neurips.cc/paper/2020/file/c928d86ff00aeb89a39bd4a80e652a38-
 
 https://arxiv.org/pdf/1704.00454.pdf
 
-Matthias Legal NLP General Info Links: 
-
-https://aclanthology.org/2021.acl-long.213.pdf
-
-https://arxiv.org/pdf/2010.00711.pdf
-
-https://sites.ualberta.ca/~rabelo/COLIEE2022/
-
-https://aclanthology.org/2021.nllp-1.13.pdf
-
-https://nllpw.org/workshop/program/
-
-https://aclanthology.org/2021.nllp-1.7.pdf
-
-https://ostendorff.org/assets/pdf/ostendorff2021a.pdf
-
 # General Interest Literature Review 
  
 AdapterFusion: Non-Destructive Task Composition for Transfer Learning
@@ -67,6 +51,23 @@ https://arxiv.org/pdf/2109.13238.pdf
 
 Improving language models by retrieving from trillions of tokens
 https://arxiv.org/pdf/2112.04426.pdf
+
+
+## Matthias Legal NLP General Info Links: 
+
+https://aclanthology.org/2021.acl-long.213.pdf
+
+https://arxiv.org/pdf/2010.00711.pdf
+
+https://sites.ualberta.ca/~rabelo/COLIEE2022/
+
+https://aclanthology.org/2021.nllp-1.13.pdf
+
+https://nllpw.org/workshop/program/
+
+https://aclanthology.org/2021.nllp-1.7.pdf
+
+https://ostendorff.org/assets/pdf/ostendorff2021a.pdf
 
 
 # Ilias RQ: 
