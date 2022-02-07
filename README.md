@@ -1,19 +1,17 @@
 # thesis
 
-# Potential Topics 
-
-Explainability for Legal Judgment Prediction
-Main topic: Explainability
-I recently moved a bit to this direction for the very first time in this paper (https://aclanthology.org/2021.naacl-main.22/), where we examine rationale extraction on ECtHR cases, but recently two more datasets have been published (ILDC: https://aclanthology.org/2021.acl-long.313/, ContractNLI: https://aclanthology.org/2021.findings-emnlp.164/), which are annotated with both relevant labels and rationales (sentences that indicate the right label).
-I guess a first goal here would be to consider recent advances in this topic (explainability / rationale extraction) and compare different methods across these datasets / tasks. We could even consider more classic methods, like LIME, that I skipped in this work.
-
 Retrieval-enhanced Legal Document Classification
 Main Topic: Multi-Document Classification 
 The question here is "Is external knowledge -described in other documents- beneficial for legal document classification? How we could effectively model relevant documents and their relation with the target document (the one to be classified)?"
 Recently, similar ideas have been examined in the context of LM pre-training (https://arxiv.org/abs/2112.04426), where retrieving "relevant" sentences seems to improve LM performance. But, in general, it seems natural to exploit relevant sources (documents) to resolve document classification tasks. For example, legal professionals (lawyers, judges) always consider the relevant legislation and case-law when they want to predict the outcome of a legal case, while we currently focus on models that only consider the facts of the case.
 Based on this idea, we could examine how we could better (but also efficiently) encode relevant documents to improve the performance in legal judgment prediction.
 
-Matthias Links: 
+Mina Links: 
+
+
+
+
+Matthias Legal NLP General Info Links: 
 
 https://aclanthology.org/2021.acl-long.213.pdf
 
@@ -52,7 +50,6 @@ https://dl.acm.org/doi/pdf/10.1145/3462757.3466149
 
 Dynamic Knowledge Distillation for Pre-trained Language Models
 https://aclanthology.org/2021.emnlp-main.31.pdf
-
 
 Towards Zero-Shot Knowledge Distillation for Natural Language Processing
 https://aclanthology.org/2021.emnlp-main.526.pdf
