@@ -8,7 +8,7 @@ The question here is "Is external knowledge -described in other documents- benef
 Recently, similar ideas have been examined in the context of LM pre-training (https://arxiv.org/abs/2112.04426), where retrieving "relevant" sentences seems to improve LM performance. But, in general, it seems natural to exploit relevant sources (documents) to resolve document classification tasks. For example, legal professionals (lawyers, judges) always consider the relevant legislation and case-law when they want to predict the outcome of a legal case, while we currently focus on models that only consider the facts of the case.
 Based on this idea, we could examine how we could better (but also efficiently) encode relevant documents to improve the performance in legal judgment prediction.
 
-Mina Links: 
+# Mina Links: 
 
 ## Finding a divergence learning metric
 
