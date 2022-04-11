@@ -1,5 +1,14 @@
 # Thesis
 
+# Reading list 
+
+Recent:
+https://arxiv.org/pdf/2203.07847.pdf
+
+
+
+
+
 # Mina Links: 
 
 ## Finding a divergence learning metric
