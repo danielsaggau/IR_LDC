@@ -1,8 +1,0 @@
----
-title: "math foundations supervised learning"
-author: "Daniel Saggau"
-date: "2/24/2022"
----
-
-# Neural netoworks 
-
