@@ -15,7 +15,7 @@ class SimpleOutput(ModelOutput):
     attentions: Optional[Tuple[torch.FloatTensor]] = None
     cross_attentions: Optional[Tuple[torch.FloatTensor]] = None
 
-
+# question how this works?
 def sinusoidal_init(num_embeddings: int, embedding_dim: int):
     # keep dim 0 for padding token position encoding zero vector
     position_enc = np.array([
@@ -25,7 +25,6 @@ def sinusoidal_init(num_embeddings: int, embedding_dim: int):
     position_enc[1:, 0::2] = np.sin(position_enc[1:, 0::2])  # dim 2i
     position_enc[1:, 1::2] = np.cos(position_enc[1:, 1::2])  # dim 2i+1
     return torch.from_numpy(position_enc).type(torch.FloatTensor)
-
 
 class HierarchicalBert(nn.Module):
 
@@ -104,6 +103,9 @@ class HierarchicalBert(nn.Module):
 
         return SimpleOutput(last_hidden_state=outputs, hidden_states=outputs)
 
+# tokenizer choice
+# automodel for sequence classification
+#
 
 if __name__ == "__main__":
     from transformers import AutoTokenizer, AutoModel, AutoModelForSequenceClassification
