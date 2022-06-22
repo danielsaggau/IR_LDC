@@ -113,9 +113,6 @@ class ModelArguments:
     model_name_or_path: str = field(
         default=None, metadata={"help": "Path to pretrained model or model identifier from huggingface.co/models"}
     )
-    hierarchical: bool = field(
-        default=True, metadata={"help": "Whether to use a hierarchical variant or not"}
-    )
     config_name: Optional[str] = field(
         default=None, metadata={"help": "Pretrained config name or path if not the same as model_name"}
     )
@@ -158,11 +155,6 @@ class ModelArguments:
             model_args.do_lower_case = False
         else:
             model_args.do_lower_case = True
-
-        if model_args.hierarchical == 'False' or not model_args.hierarchical:
-            model_args.hierarchical = False
-        else:
-            model_args.hierarchical = True
 
         # Setup distant debugging if needed
         if data_args.server_ip and data_args.server_port:
@@ -312,8 +304,6 @@ class ModelArguments:
 
         def preprocess_function(examples):
             # Tokenize the texts
-            if model_args.hierarchical:
-                case_template = [[0] * data_args.max_seg_length]
                 if config.model_type == 'roberta':
                     batch = {'input_ids': [], 'attention_mask': []}
                     for case in examples['text']:
