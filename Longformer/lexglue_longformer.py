@@ -262,38 +262,6 @@ class ModelArguments:
                 use_auth_token=True if model_args.use_auth_token else None,
             )
 
-        if model_args.hierarchical:
-            # Hack the classifier encoder to use hierarchical BERT
-            if config.model_type in ['bert', 'deberta']:
-                if config.model_type == 'bert':
-                    segment_encoder = model.bert
-                else:
-                    segment_encoder = model.deberta
-                model_encoder = HierarchicalBert(encoder=segment_encoder,
-                                                 max_segments=data_args.max_segments,
-                                                 max_segment_length=data_args.max_seg_length)
-                if config.model_type == 'bert':
-                    model.bert = model_encoder
-                elif config.model_type == 'deberta':
-                    model.deberta = model_encoder
-                else:
-                    raise NotImplementedError(f"{config.model_type} is no supported yet!")
-            elif config.model_type == 'roberta':
-                model_encoder = HierarchicalBert(encoder=model.roberta, max_segments=data_args.max_segments,
-                                                 max_segment_length=data_args.max_seg_length)
-                model.roberta = model_encoder
-                # Build a new classification layer, as well
-                dense = nn.Linear(config.hidden_size, config.hidden_size)
-                dense.load_state_dict(model.classifier.dense.state_dict())  # load weights
-                dropout = nn.Dropout(config.hidden_dropout_prob).to(model.device)
-                out_proj = nn.Linear(config.hidden_size, config.num_labels).to(model.device)
-                out_proj.load_state_dict(model.classifier.out_proj.state_dict())  # load weights
-                model.classifier = nn.Sequential(dense, dropout, out_proj).to(model.device)
-            elif config.model_type in ['longformer', 'big_bird']:
-                pass
-            else:
-                raise NotImplementedError(f"{config.model_type} is no supported yet!")
-
         # Preprocessing the datasets
         # Padding strategy
         if data_args.pad_to_max_length:
