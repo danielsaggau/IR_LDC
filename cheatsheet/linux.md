@@ -1,7 +1,7 @@
 # tmux commands 
 
 ## Start a new session 
-tmux new 
+`tmux new` 
 
 ## start a new session w session-name 
 tmux new -s sessionname 
