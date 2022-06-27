@@ -10,9 +10,24 @@
 
 `tmux ls` 
 
+## attach to session by name 
+
+`tmux attach -t sessionname`
+
+## attach last session 
+
+`tmux attach`
+
+## kill a session 
+
+tmux kill -session -t sessionname 
 
 
 # slurm commands 
+
+`sbatch`
+
+`srun`
 
 The main difference is that srun is interactive and blocking 
 (you get the result in your terminal and 
