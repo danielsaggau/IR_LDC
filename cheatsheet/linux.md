@@ -4,11 +4,11 @@
 `tmux new` 
 
 ## start a new session w session-name 
-tmux new -s sessionname 
+`tmux new -s sessionname` 
 
 ## list sessions 
 
-tmux ls 
+`tmux ls` 
 
 
 
