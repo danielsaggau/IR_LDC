@@ -7,7 +7,7 @@
 #SBATCH --job-name=lexglue-longformer-ecthr
 
 #your script, in this case: write the hostname and the ids of the chosen gpus.
-hostname
+#hostname
 echo $CUDA_VISIBLE_DEVICES
 export PYTHONPATH=.
 MODEL_PATH='models/legal-longformer'
