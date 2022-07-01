@@ -1,7 +1,7 @@
 #!/bin/bash
 #normal cpu stuff: allocate cpus, memory
-#SBATCH --ntasks=1 --gpus-per-task=8 --partition=mcml-dgx-a100-40x8
-#SBATCH --gres=gpu:1 --qos=mcml --mem=16GB
+#SBATCH --ntasks=1 --gpus-per-task=1 --partition=mcml-dgx-a100-40x8
+#SBATCH --qos=mcml --mem=16GB
 #SBATCH --time=1-00:00:00
 #SBATCH --output=experiments-longformer-ecthr
 #SBATCH --job-name=lexglue-longformer-ecthr
