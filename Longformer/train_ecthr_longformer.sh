@@ -30,9 +30,6 @@ python lexglue_longformer.py --task ecthr_a \
         --learning_rate 3e-5 \
         --per_device_train_batch_size 6 \
         --per_device_eval_batch_size  6 \
-        --max_train_samples 4 \
-        --max_eval_samples  4 \
-        --max_predict_samples 4 \
         --fp16 \
         --fp16_full_eval \
         --max_seq_length  4096
