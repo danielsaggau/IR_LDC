@@ -54,7 +54,7 @@ class TripletLoss(nn.Module):
         return losses.mean()
 
 
-class BregmannLoss(nn.Module):
+class BregmanLoss(nn.Module):
     """ The Bregman loss should take a triplet (anchor, negative, positive) computing the loss for all valid triplets
     Arguments:
     :param model:
@@ -63,5 +63,35 @@ class BregmannLoss(nn.Module):
     Returns:
     Example;
     """
+    def __init__(self, batch_size, temperature, sigma):
+    super(BregmanLoss, self).__init__()
+    self.batch_size = batch_size
+    self.temperature = temperature
+    self.sigma = sigma
+    self.mask = self.mask_correlated_samples(batch_size)
+    self.criterion = nn.CrossEntropyLoss(reduction="sum")
+
+    def mask_correlated_samples(self, batch_size):
+    """
+    masking for triplets
+    """
+
     def divergence_matrix(self, ):
+    """
+    creates divergence matrix
+    """
+
+    def pairwise_divergences(embed):
+        """
+        converts divergences into matrix
+        :return:
+        """
+
+
+
+
+
+
+
+
 
