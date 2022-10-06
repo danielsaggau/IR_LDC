@@ -54,6 +54,16 @@ class TripletLoss(nn.Module):
         return losses.mean()
 
 
+
+
+
+
+
+
+
+
+
+
 class BregmanLoss(nn.Module):
     """ The Bregman loss should take a triplet (anchor, negative, positive) computing the loss for all valid triplets
     Arguments:
@@ -76,20 +86,38 @@ class BregmanLoss(nn.Module):
     masking for triplets
     """
 
-    def divergence_matrix(self, ):
+
+
+    def batch_similarity(self, features):
     """
     creates divergence matrix
     """
 
-    def pairwise_divergences(embed):
-        """
-        converts divergences into matrix
-        :return:
-        """
+
+    def pairwise_distance(embed):
+    """
+    converts divergences into matrix
+    :return:
+    """
 
 
+def batch_sim(self, features):
+    mm = torch.max(features, dim=1)
+    indx_max_features = mm[1]
+    max_features = mm[0].reshape(-1, 1)
 
+    # Compute the number of active subnets in one batch
+    eye = torch.eye(features.shape[1])
+    one = eye[indx_max_features]
+    num_max = torch.sum(one, dim=0)
 
+    dist_matrix = max_features - features[:, indx_max_features]
+
+        sigma = torch.tensor([self.sigma]).to(features.device)
+        sig2 = 2 * torch.pow(sigma, 2)
+        sim_matrix = torch.exp(torch.div(-dist_matrix, sig2))
+
+    return sim_matrix, num_max
 
 
 
