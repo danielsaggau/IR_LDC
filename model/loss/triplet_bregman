@@ -1,4 +1,4 @@
-class BregmannLoss(nn.Module):
+class BregmannTripletLoss(nn.Module):
       """ The Bregman loss should take a triplet (anchor, negative, positive) computing the loss for all valid triplets
       Arguments: 
       :param model: 
