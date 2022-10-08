@@ -1,5 +1,5 @@
 
-class BregmanLoss(nn.Module):
+class BregmanContrastiveLoss(nn.Module):
     """
     The Bregman loss. Expect as Input 
 
