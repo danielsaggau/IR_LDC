@@ -12,7 +12,7 @@ tags:
 This is a [sentence-transformers](https://www.SBERT.net) model: It maps sentences & paragraphs to a 768 dimensional dense vector space and can be used for tasks like clustering or semantic search.
 
 
-![](figure/graphs_paper.pdf)
+![](Figure/graphs_paper.pdf)
 
 <!--- Describe your model here -->
 
