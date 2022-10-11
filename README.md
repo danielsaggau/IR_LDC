@@ -86,7 +86,7 @@ For an automated evaluation of this model, see the *Sentence Embeddings Benchmar
 ### Classification 
 
 
-|          Model          | STS12 | Swiss Judgement Prediction | Avg. |
+|          Model          | ECtHR | Swiss Judgement Prediction | Avg. |
 |:-----------------------:|:-----:|:--------------------------:|:----:|
 | Legal Siamese Longformer  |  TBD |TBD| 8TBD| TBD |TBD| TBD| TBD| TBD|
 | Legal Siamese Bregman Longformer  |  TBD |TBD| TBD| TBD |TBD| TBD| TBD| TBD|
