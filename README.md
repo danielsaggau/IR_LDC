@@ -74,10 +74,22 @@ print(sentence_embeddings)
 
 ## Evaluation Results
 
-<!--- Describe how your model was evaluated -->
+### Sentence Embeddings
+
+|          Model          | STS12 | STS13 | STS14 | STS15 | STS16 | STS-B | SICK-R | Avg. |
+|:-----------------------:|:-----:|:----------:|:---------:|:-----:|:-----:|:-----:|:-----:|:-----:|
+| Legal Siamese Longformer  |  TBD |TBD| TBD| TBD |TBD| TBD| TBD| TBD|
+| Legal Siamese Bregman Longformer  |  TBD |TBD| TBD| TBD |TBD| TBD| TBD| TBD|
 
 For an automated evaluation of this model, see the *Sentence Embeddings Benchmark*: [https://seb.sbert.net](https://seb.sbert.net?model_name={MODEL_NAME})
 
+### Classification 
+
+
+|          Model          | STS12 | Swiss Judgement Prediction | Avg. |
+|:-----------------------:|:-----:|:--------------------------:|:----:|
+| Legal Siamese Longformer  |  TBD |TBD| 8TBD| TBD |TBD| TBD| TBD| TBD|
+| Legal Siamese Bregman Longformer  |  TBD |TBD| TBD| TBD |TBD| TBD| TBD| TBD|
 
 ## Training
 The model was trained with the parameters:
