@@ -87,7 +87,7 @@ For an automated evaluation of this model, see the *Sentence Embeddings Benchmar
 
 
 |          Model          | <td colspan=2> ECtHR| <td colspan=2> Swiss Judgement Prediction | Avg. |
-|:-----------------------:|:---------------:|-----------:|:--------------:|:--------:|:---:|
+|:-----------------------:|:---------------:|:-----------:|:--------------:|:--------:|:---:|
 |                         |micro F1|   macro F1| micro F1| macro F1 | |
 | Legal Siamese Longformer  |  TBD |TBD| 8TBD| TBD |TBD| TBD| TBD| TBD|
 | Legal Siamese Bregman Longformer  |  TBD |TBD| TBD| TBD |TBD| TBD| TBD| TBD|
