@@ -13,7 +13,6 @@ from typing import Optional
 import datasets
 from datasets import load_dataset
 from sklearn.metrics import f1_score
-from models.hierbert import HierarchicalBert
 import numpy as np
 from torch import nn
 import glob
@@ -36,8 +35,6 @@ from transformers import (
 from transformers.trainer_utils import get_last_checkpoint
 from transformers.utils import check_min_version
 from transformers.utils.versions import require_version
-from models.deberta import DebertaForSequenceClassification
-
 
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
 check_min_version("4.9.0")
@@ -117,9 +114,6 @@ class ModelArguments:
     model_name_or_path: str = field(
         default=None, metadata={"help": "Path to pretrained model or model identifier from huggingface.co/models"}
     )
-    hierarchical: bool = field(
-        default=True, metadata={"help": "Whether to use a hierarchical variant or not"}
-    )
     config_name: Optional[str] = field(
         default=None, metadata={"help": "Pretrained config name or path if not the same as model_name"}
     )
@@ -173,11 +167,6 @@ def main():
         model_args.do_lower_case = False
     else:
         model_args.do_lower_case = True
-
-    if model_args.hierarchical == 'False' or not model_args.hierarchical:
-        model_args.hierarchical = False
-    else:
-        model_args.hierarchical = True
 
     # Setup logging
     logging.basicConfig(
@@ -252,9 +241,8 @@ def main():
         use_fast=model_args.use_fast_tokenizer,
         revision=model_args.model_revision,
         use_auth_token=True if model_args.use_auth_token else None,
-    )
-    if config.model_type == 'deberta' and model_args.hierarchical:
-        model = DebertaForSequenceClassification.from_pretrained(
+      
+     model = AutoModelForSequenceClassification.from_pretrained(
             model_args.model_name_or_path,
             from_tf=bool(".ckpt" in model_args.model_name_or_path),
             config=config,
@@ -262,46 +250,6 @@ def main():
             revision=model_args.model_revision,
             use_auth_token=True if model_args.use_auth_token else None,
         )
-    else:
-        model = AutoModelForSequenceClassification.from_pretrained(
-            model_args.model_name_or_path,
-            from_tf=bool(".ckpt" in model_args.model_name_or_path),
-            config=config,
-            cache_dir=model_args.cache_dir,
-            revision=model_args.model_revision,
-            use_auth_token=True if model_args.use_auth_token else None,
-        )
-    if model_args.hierarchical:
-        # Hack the classifier encoder to use hierarchical BERT
-        if config.model_type in ['bert', 'deberta']:
-            if config.model_type == 'bert':
-                segment_encoder = model.bert
-            else:
-                segment_encoder = model.deberta
-            model_encoder = HierarchicalBert(encoder=segment_encoder,
-                                             max_segments=data_args.max_segments,
-                                             max_segment_length=data_args.max_seg_length)
-            if config.model_type == 'bert':
-                model.bert = model_encoder
-            elif config.model_type == 'deberta':
-                model.deberta = model_encoder
-            else:
-                raise NotImplementedError(f"{config.model_type} is no supported yet!")
-        elif config.model_type == 'roberta':
-            model_encoder = HierarchicalBert(encoder=model.roberta, max_segments=data_args.max_segments,
-                                             max_segment_length=data_args.max_seg_length)
-            model.roberta = model_encoder
-            # Build a new classification layer, as well
-            dense = nn.Linear(config.hidden_size, config.hidden_size)
-            dense.load_state_dict(model.classifier.dense.state_dict())  # load weights
-            dropout = nn.Dropout(config.hidden_dropout_prob).to(model.device)
-            out_proj = nn.Linear(config.hidden_size, config.num_labels).to(model.device)
-            out_proj.load_state_dict(model.classifier.out_proj.state_dict())  # load weights
-            model.classifier = nn.Sequential(dense, dropout, out_proj).to(model.device)
-        elif config.model_type in ['longformer', 'big_bird']:
-            pass
-        else:
-            raise NotImplementedError(f"{config.model_type} is no supported yet!")
 
     # Preprocessing the datasets
     # Padding strategy
@@ -313,20 +261,7 @@ def main():
 
     def preprocess_function(examples):
         # Tokenize the texts
-        if model_args.hierarchical:
-            case_template = [[0] * data_args.max_seq_length]
-            if config.model_type == 'roberta':
-                batch = {'input_ids': [], 'attention_mask': []}
-                for doc in examples['text']:
-                    doc = re.split('\n{2,}', doc)
-                    doc_encodings = tokenizer(doc[:data_args.max_segments], padding=padding,
-                                              max_length=data_args.max_seg_length, truncation=True)
-                    batch['input_ids'].append(doc_encodings['input_ids'] + case_template * (
-                            data_args.max_segments - len(doc_encodings['input_ids'])))
-                    batch['attention_mask'].append(doc_encodings['attention_mask'] + case_template * (
-                            data_args.max_segments - len(doc_encodings['attention_mask'])))
-            else:
-                batch = {'input_ids': [], 'attention_mask': [], 'token_type_ids': []}
+       batch = {'input_ids': [], 'attention_mask': [], 'token_type_ids': []}
                 for doc in examples['text']:
                     doc = re.split('\n{2,}', doc)
                     doc_encodings = tokenizer(doc[:data_args.max_segments], padding=padding,
@@ -337,7 +272,7 @@ def main():
                                 data_args.max_segments - len(doc_encodings['attention_mask'])))
                     batch['token_type_ids'].append(doc_encodings['token_type_ids'] + case_template * (
                                 data_args.max_segments - len(doc_encodings['token_type_ids'])))
-        elif config.model_type in ['longformer', 'big_bird']:
+        if config.model_type in ['longformer', 'big_bird']:
             cases = []
             max_position_embeddings = config.max_position_embeddings - 2 if config.model_type == 'longformer' \
                 else config.max_position_embeddings
@@ -393,7 +328,6 @@ def main():
                 load_from_cache_file=not data_args.overwrite_cache,
                 desc="Running tokenizer on prediction dataset",
             )
-
     # You can define your custom compute_metrics function. It takes an `EvalPrediction` object (a namedtuple with a
     # predictions and label_ids field) and has to return a dictionary string to float.
     def compute_metrics(p: EvalPrediction):
