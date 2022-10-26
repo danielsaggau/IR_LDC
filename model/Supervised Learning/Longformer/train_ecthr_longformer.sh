@@ -1,10 +1,12 @@
 #!/bin/bash
 #normal cpu stuff: allocate cpus, memory
-#SBATCH --ntasks=1 --cpus-per-task=8 --partition=mcml-dgx-a100-40x8
+#SBATCH --ntasks=1 --gres=gpu:1 --partition=mcml-dgx-a100-40x8
 #SBATCH --qos=mcml --mem=16GB
-#SBATCH --time=1-00:00:00
+#SBATCH --time=0-07:00:00
 #SBATCH --output=experiments-longformer-ecthr
 #SBATCH --job-name=lexglue-longformer-ecthr
+#SBATCH --mail-user=daniel.saggau@gmail.com
+#SBATCH --mail-type=ALL
 
 #your script, in this case: write the hostname and the ids of the chosen gpus.
 #hostname
@@ -12,7 +14,7 @@ echo $CUDA_VISIBLE_DEVICES
 export PYTHONPATH=.
 MODEL_PATH='models/legal-longformer'
 
-python lexglue_longformer.py --task ecthr_a \
+python lexglue_longformer.py --task ecthr_b \
         --model_name_or_path ${MODEL_PATH} \
         --do_lower_case 1 \
         --output_dir  logs/${MODEL_PATH}-ecthr \
@@ -33,3 +35,4 @@ python lexglue_longformer.py --task ecthr_a \
         --fp16 \
         --fp16_full_eval \
         --max_seq_length  4096
+
