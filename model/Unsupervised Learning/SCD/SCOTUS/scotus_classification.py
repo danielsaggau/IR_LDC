@@ -13,7 +13,6 @@ from typing import Optional
 import datasets
 from datasets import load_dataset
 from sklearn.metrics import f1_score
-from models.hierbert import HierarchicalBert
 import numpy as np
 from torch import nn
 import glob
@@ -36,8 +35,6 @@ from transformers import (
 from transformers.trainer_utils import get_last_checkpoint
 from transformers.utils import check_min_version
 from transformers.utils.versions import require_version
-from models.deberta import DebertaForSequenceClassification
-
 
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
 check_min_version("4.9.0")
