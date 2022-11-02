@@ -74,7 +74,7 @@ print(sentence_embeddings)
 
 ## Evaluation Results
 
-### Sentence Embeddings
+### Classification Results
 
 |          Model          | ECTHR | SCOTUS |MIMIC|
 |:-----------------------:|:-----:|:-:|:-:|
