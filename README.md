@@ -78,8 +78,8 @@ print(sentence_embeddings)
 
 |          Model          | ECTHR | SCOTUS |MIMIC|
 |:-----------------------:|:-----:|:-:|:-:|
-| Legal Siamese Longformer ECTHR |  TBD | 80. | TBD|
-| Legal Siamese Longformer Scotus  |  TBD | 81. | TBD|
+| Legal Siamese Longformer ECTHR |  TBD | 79.5 / 68.2 | TBD|
+| Legal Siamese Longformer Scotus  |  TBD | 81. / 68.0 | TBD|
 | Legal Siamese Bregman Longformer  |  TBD |TBD| TBD|
 
 For an automated evaluation of this model, see the *Sentence Embeddings Benchmark*: [https://seb.sbert.net](https://seb.sbert.net?model_name={MODEL_NAME})
