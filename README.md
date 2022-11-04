@@ -78,7 +78,6 @@ print(sentence_embeddings)
 
 |          Model          | ECTHR | SCOTUS |MIMIC|
 |:-----------------------:|:-----:|:-:|:-:|
-
 | Legal Siamese Longformer ECTHR |  TBD | 80. | TBD|
 | Legal Siamese Longformer Scotus  |  TBD | 81. | TBD|
 | Legal Siamese Bregman Longformer  |  TBD |TBD| TBD|
