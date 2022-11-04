@@ -78,6 +78,8 @@ print(sentence_embeddings)
 
 |          Model          | ECTHR | SCOTUS |MIMIC|
 |:-----------------------:|:-----:|:-:|:-:|
+| Lexglue Legal Bert  |  TBD | TBD | TBD|
+| Lexglue Longformer  |  TBD | TBD | TBD|
 | Legal Siamese Longformer  |  TBD | TBD | TBD|
 | Legal Siamese Longformer SIMCSE ECTHR |  TBD | 79.5 / 68.2 | TBD|
 | Legal Siamese Longformer SIMCSE Scotus  |  TBD | 81. / 68.0 | TBD|
