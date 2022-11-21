@@ -76,13 +76,13 @@ print(sentence_embeddings)
 
 ### Classification Results
 
-|          Model          | ECTHR B | SCOTUS |MIMIC |
-|:-----------------------:|:-----:|:-:|:-:|
-| Lexglue Legal Bert  |  TBD | TBD | TBD|
-| Lexglue Longformer  |  TBD | TBD | TBD|
-| Legal Siamese Longformer  |  TBD | TBD | TBD|
-| Legal Siamese Longformer_{SIMCSE} |  TBD | TBD | TBD|
-| Legal Siamese Bregman Longformer  |  TBD |TBD| TBD|
+|          Model          | ECTHR B | ECTHR A | SCOTUS |MIMIC |
+|:-----------------------:|:-----:|:-:|:-:|:-:|
+| Lexglue Legal Bert  |  TBD | TBD | TBD|TBD|
+| Lexglue Longformer  |  TBD | TBD | TBD|TBD|
+| Legal Siamese Longformer  |  TBD | TBD | TBD|TBD|
+| Legal Siamese Longformer_{SIMCSE} |  TBD | TBD | TBD|TBD|
+| Legal Siamese Bregman Longformer  |  TBD |TBD| TBD|TBD|
 
 For an automated evaluation of this model, see the *Sentence Embeddings Benchmark*: [https://seb.sbert.net](https://seb.sbert.net?model_name={MODEL_NAME})
 
