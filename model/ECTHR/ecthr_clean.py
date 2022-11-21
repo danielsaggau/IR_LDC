@@ -101,6 +101,11 @@ def main():
     )
     logger.info(f"Training/evaluation parameters {training_args}")
     
+    
+    
+    label_list = list(range(10))
+    num_labels = len(label_list)
+    
     if data_args.dataset_selection=="ecthr_a":
         dataset = load_dataset("lex_glue", "ecthr_a")
         tokenizer = AutoTokenizer.from_pretrained("danielsaggau/", use_auth_token=True, use_fast=True)
