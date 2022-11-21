@@ -57,6 +57,7 @@ class DataTrainingArguments:
             "If False, will pad the samples dynamically when batching to the maximum length in the batch."
         },
     )
+    
 
 @dataclass
 class ModelArguments:
@@ -69,16 +70,9 @@ class ModelArguments:
     OUTPUT_PATH: str = field(
         default='output', metadata={"help": "Path to output repository locally"}
     )
-    tokenizer_name: Optional[str] = field(
-        default=None, metadata={"help": "Pretrained tokenizer name or path if not the same as model_name"}
-    )
     do_lower_case: Optional[bool] = field(
         default=True,
         metadata={"help": "arg to indicate if tokenizer should do lower case in AutoTokenizer.from_pretrained()"},
-    )
-    use_fast_tokenizer: bool = field(
-        default=True,
-        metadata={"help": "Whether to use one of the fast tokenizer (backed by the tokenizers library) or not."},
     )
     do_pooling: Optional[bool] = field(
         default=False,
@@ -95,6 +89,10 @@ class ModelArguments:
     freezing:Optional[bool] = field(
       default=False,
       metadata={"help": 'Freeze the layers apart from the Classification head (MLP)'}
+    )
+    subnetworks: Optional[bool] = field(
+      default=False, 
+      metadata={"help": }
     )
 def main():
     # See all possible arguments in src/transformers/training_args.py
@@ -126,13 +124,15 @@ def main():
     if model_args.model_type =='mean':
       model = AutoModelForSequenceClassification.from_pretrained('danielsaggau/longformer_simcse_scotus',use_auth_token=True, num_labels=14)
       tokenizer = AutoTokenizer.from_pretrained('danielsaggau/longformer_simcse_scotus', use_auth_token=True,use_fast=True)
-      print('load mean model')
+      logger.info('load mean model')
     elif model_args.model_type =='cls':
       model = AutoModelForSequenceClassification.from_pretrained('danielsaggau/longformer_simcse_scotus',use_auth_token=True, num_labels=14)
       tokenizer = AutoTokenizer.from_pretrained('danielsaggau/longformer_simcse_scotus', use_auth_token=True,use_fast=True)
+      logger.info('load cls model')
     elif model_args.model_type =='max':
       model = AutoModelForSequenceClassification.from_pretrained('danielsaggau/scotus_max_pool',use_auth_token=True, num_labels=14)
       tokenizer = AutoTokenizer.from_pretrained('danielsaggau/scotus_max_pool', use_auth_token=True,use_fast=True)
+      logger.info('loading max model')
 
 
     if data_args.pad_to_max_length:
@@ -144,12 +144,10 @@ def main():
     def preprocess_function(examples):
       return tokenizer(examples["text"], truncation=True, padding=padding)
 
-
     tokenized_data = dataset.map(
       preprocess_function,
       batched=True,
       desc="tokenizing the entire dataset")
-
 
     if model_args.compute_accuracy: 
       def compute_metrics(eval_pred):
@@ -165,13 +163,11 @@ def main():
     else: 
       def compute_metrics(eval_pred):
         metric1 = load_metric("f1")
-        accuracy = load_metric("accuracy")
         logits, labels = eval_pred
         predictions = np.argmax(logits, axis=-1)
         micro1 = metric1.compute(predictions=predictions, references=labels, average="micro")["f1"]
         macro1 = metric1.compute(predictions=predictions, references=labels, average="macro")["f1"]
-        accuracy = accuracy.compute(references=labels, predictions=predictions)['accuracy']
-        return { "f1-micro": micro1, "f1-macro": macro1, "accuracy": accuracy} 
+        return { "f1-micro": micro1, "f1-macro": macro1} 
 
     data_collator = DataCollatorWithPadding(tokenizer, pad_to_multiple_of=8) # fp16
     model = AutoModelForSequenceClassification.from_pretrained('danielsaggau/longformer_simcse_scotus',use_auth_token=True, num_labels=14)
@@ -192,6 +188,7 @@ def main():
               return pooled_output
         model.longformer.pooler = CustomLongformerMeanPooler(model.config)
         print('model mean pooler loaded')
+    
     elif model_args.model_type =='max':
       logger.info('Instantiate max pooling')
       class LongformerMeanPooler(nn.Module):
@@ -207,7 +204,6 @@ def main():
             pooled_output = self.dense(pooled_output)
             pooled_output = self.activation(pooled_output)
             return pooled_output
-
       model.longformer.pooler = LongformerMeanPooler(model.config)
       
     elif model_args.model_type=="cls":
@@ -218,21 +214,20 @@ def main():
           self.activation = nn.Tanh()
 
         def forward(self, hidden_states: torch.Tensor) -> torch.Tensor:
-        # We "pool" the model by simply taking the hidden state corresponding
-        # to the first token.
-          mean_token_tensor = hidden_states.mean(dim=1)
+
+          mean_token_tensor = hidden_states[:, 0]
           pooled_output = self.dense(mean_token_tensor)
           pooled_output = self.activation(pooled_output)
           return pooled_output
       model.longformer.pooler = LongformerCLSPooler(model.config)
-      print('model cls pooler loaded')
+      logger.info('model cls pooler loaded')
 
-
+    # freezing the body and only leaving the head 
     if model_args.freezing=='True':
       for name, param in model.named_parameters():
         if name.startswith("longformer."): # choose whatever you like here
           param.requires_grad = False
-      logging.info('Freeze All Parameters apart from the CLS head')
+      logger.info('Freeze All Parameters apart from the CLS head')
 
     trainer = Trainer(
     model=model,
