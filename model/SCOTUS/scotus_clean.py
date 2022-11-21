@@ -18,8 +18,6 @@ from transformers import TrainerCallback
 from datasets import load_metric
 import numpy as np
 
-MODEL_PATH = "log/exp1"
-
 import logging
 import os
 import random
@@ -45,7 +43,6 @@ HfFolder.save_token('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')
 
 logging.info('Connect to huggingface')
 
-
 @dataclass
 class DataTrainingArguments:
     """
@@ -67,21 +64,11 @@ class ModelArguments:
     """
     Arguments pertaining to which model/config/tokenizer we are going to fine-tune from.
     """
-
-    model_name: Optional[str] = field(
-        default=None, metadata={"help": "Path to pretrained model or model identifier from huggingface.co/models"}
-    )
+    #model_name: Optional[str] = field(
+    #    default=None, metadata={"help": "Path to pretrained model or model identifier from huggingface.co/models"}
+    #)
     OUTPUT_PATH: str = field(
-        default=model_name, metadata={"help": "Path to output repository locally"}
-    )
-    WARMUP_RATIO: Optional[int] = field(
-        default= None, metadata={"help":"warmup_ratio"}
-    )
-    LEARNING_RATE: Optional[float] = field(
-        default= "3e-5", metadata={"help":"Learning Rate "}
-    )
-    SCHEDULER: Optional[str] = field(
-        default= "linear", metadata={"help":"Scheduler"}
+        default='output', metadata={"help": "Path to output repository locally"}
     )
     tokenizer_name: Optional[str] = field(
         default=None, metadata={"help": "Pretrained tokenizer name or path if not the same as model_name"}
@@ -94,12 +81,13 @@ class ModelArguments:
         default=True,
         metadata={"help": "Whether to use one of the fast tokenizer (backed by the tokenizers library) or not."},
     )
-    use_auth_token: bool = field(
+    do_pooling: Optional[bool] = field(
         default=False,
-        metadata={
-            "help": "Will use the token generated when running `transformers-cli login` (necessary to use this script "
-            "with private models)."
-        },
+        metadata={"help": "Do pooling"},
+    )
+    compute_accuracy:Optional[bool] = field(
+      default=False, 
+      metadata={"help": "compute accuracy in addition to f1 micro and macro"}
     )
 def main():
     # See all possible arguments in src/transformers/training_args.py
@@ -113,78 +101,77 @@ def main():
 
     logger = logging.getLogger(__name__)
 
+    if data_args.pad_to_max_length:
+        padding = "max_length"
+    else:
+        # We will pad later, dynamically at batch creation, to the max sequence length in each batch
+        padding = False
+
     def preprocess_function(examples):
-      return tokenizer(examples["text"], truncation=True)
+      return tokenizer(examples["text"], truncation=True, padding=padding)
 
 
     tokenized_data = dataset.map(preprocess_function, batched=True)
 
     logging.info('Tokenize the data')
 
-    def compute_metrics(eval_pred):
-      metric1 = load_metric("f1")
-      accuracy = load_metric("accuracy")
-      logits, labels = eval_pred
-      predictions = np.argmax(logits, axis=-1)
-      micro1 = metric1.compute(predictions=predictions, references=labels, average="micro")["f1"]
-      macro1 = metric1.compute(predictions=predictions, references=labels, average="macro")["f1"]
-      accuracy = accuracy.compute(references=labels, predictions=predictions)['accuracy']
-      return { "f1-micro": micro1, "f1-macro": macro1, "accuracy": accuracy}
 
 
-      training_args = TrainingArguments(
-      output_dir=model_args.OUTPUT_PATH,
-      learning_rate=model_args.LEARNING_RATE,
-      per_device_train_batch_size=6,
-      per_device_eval_batch_size=6,
-      num_train_epochs=20,
-      weight_decay=0.01,
-      save_strategy="epoch",
-      evaluation_strategy="epoch",
-      push_to_hub=True,
-      fp16=True,
-      warmup_ratio=model_args.WARM_RATIO,
-      gradient_accumulation_steps=1,
-      metric_for_best_model="f1-micro",
-      greater_is_better=True,
-      report_to='wandb',
-      lr_scheduler_type=model_args.SCHEDULER,
-      load_best_model_at_end = True
-)
+    if model_args.compute_accuracy: 
+      def compute_metrics(eval_pred):
+        metric1 = load_metric("f1")
+        accuracy = load_metric("accuracy")
+        logits, labels = eval_pred
+        predictions = np.argmax(logits, axis=-1)
+        micro1 = metric1.compute(predictions=predictions, references=labels, average="micro")["f1"]
+        macro1 = metric1.compute(predictions=predictions, references=labels, average="macro")["f1"]
+        accuracy = accuracy.compute(references=labels, predictions=predictions)['accuracy']
+        return { "f1-micro": micro1, "f1-macro": macro1, "accuracy": accuracy}
+    else: 
+      def compute_metrics(eval_pred):
+        metric1 = load_metric("f1")
+        accuracy = load_metric("accuracy")
+        logits, labels = eval_pred
+        predictions = np.argmax(logits, axis=-1)
+        micro1 = metric1.compute(predictions=predictions, references=labels, average="micro")["f1"]
+        macro1 = metric1.compute(predictions=predictions, references=labels, average="macro")["f1"]
+        accuracy = accuracy.compute(references=labels, predictions=predictions)['accuracy']
+        return { "f1-micro": micro1, "f1-macro": macro1, "accuracy": accuracy} 
 
-      data_collator = DataCollatorWithPadding(tokenizer, pad_to_multiple_of=8) # fp16
-      model = AutoModelForSequenceClassification.from_pretrained('danielsaggau/longformer_simcse_scotus',use_auth_token=True, num_labels=14)
+    data_collator = DataCollatorWithPadding(tokenizer, pad_to_multiple_of=8) # fp16
+    model = AutoModelForSequenceClassification.from_pretrained('danielsaggau/longformer_simcse_scotus',use_auth_token=True, num_labels=14)
 
-      if trainings.args.do_pooling:
-          class CustomLongformerPooler(nn.Module):
-            def __init__(self, config):
-              super().__init__()
-              self.dense = nn.Linear(config.hidden_size, config.hidden_size)
-              self.activation = nn.Tanh()
+    if model_args.do_pooling:
+        class CustomLongformerPooler(nn.Module):
+          def __init__(self, config):
+             super().__init__()
+             self.dense = nn.Linear(config.hidden_size, config.hidden_size)
+             self.activation = nn.Tanh()
 
-              def forward(self, hidden_states: torch.Tensor) -> torch.Tensor:
+          def forward(self, hidden_states: torch.Tensor) -> torch.Tensor:
         # We "pool" the model by simply taking the hidden state corresponding
         # to the first token.
-                mean_token_tensor = hidden_states.mean(dim=1)
-                pooled_output = self.dense(mean_token_tensor)
-                pooled_output = self.activation(pooled_output)
-                return pooled_output
+              mean_token_tensor = hidden_states.mean(dim=1)
+              pooled_output = self.dense(mean_token_tensor)
+              pooled_output = self.activation(pooled_output)
+              return pooled_output
 
-          model.longformer.pooler = CustomLongformerPooler(model.config)
+        model.longformer.pooler = CustomLongformerPooler(model.config)
+        print('model pooler loaded')
+    trainer = Trainer(
+    model=model,
+    compute_metrics=compute_metrics,
+    args=training_args,
+    eval_dataset=tokenized_data['test'],
+    train_dataset=tokenized_data["train"],
+    tokenizer=tokenizer,
+    data_collator=data_collator,    
+    callbacks = [EarlyStoppingCallback(early_stopping_patience=5)]
+      )
+    trainer.train()
 
-      trainer = Trainer(
-      model=model,
-      compute_metrics=compute_metrics,
-      args=training_args,
-      eval_dataset=tokenized_data['test'],
-      train_dataset=tokenized_data["train"],
-      tokenizer=tokenizer,
-      data_collator=data_collator,    
-      callbacks = [EarlyStoppingCallback(early_stopping_patience=5)])
-      trainer.train()
-
-      eval_dataset=tokenized_data['validation']
-      trainer.evaluate(eval_dataset=eval_dataset)
+    eval_dataset=tokenized_data['validation']
+    trainer.evaluate(eval_dataset=eval_dataset)
 
 if __name__ == "__main__":
     main()
