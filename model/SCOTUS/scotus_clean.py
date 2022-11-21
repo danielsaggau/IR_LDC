@@ -241,8 +241,6 @@ def main():
       )
     wandb.init(project="IR_LDC",name="mean_better_learning_rate")
     trainer.train()
-    trainer.log_metrics("train", metrics)
-    trainer.save_metrics("train", metrics)
     trainer.save_state()
 
     eval_dataset=tokenized_data['validation']
