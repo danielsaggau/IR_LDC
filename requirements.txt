@@ -5,3 +5,4 @@ pandas
 sentence_transformers
 torch
 huggingface_hub
+wandb
