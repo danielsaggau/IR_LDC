@@ -92,6 +92,10 @@ class ModelArguments:
       default=max,
       metadata={"help": "determine the type of pooling and model loaded"}
     )
+    freezing:Optional[bool] = field(
+      default=False,
+      metadata={"help": 'Freeze the layers apart from the Classification head (MLP)'}
+    )
 def main():
     # See all possible arguments in src/transformers/training_args.py
     # or by passing the --help flag to this script.
@@ -173,7 +177,7 @@ def main():
     model = AutoModelForSequenceClassification.from_pretrained('danielsaggau/longformer_simcse_scotus',use_auth_token=True, num_labels=14)
 
     if model_args.model_type =='mean':
-        class CustomLongformerPooler(nn.Module):
+        class LongformerMeanPooler(nn.Module):
           def __init__(self, config):
              super().__init__()
              self.dense = nn.Linear(config.hidden_size, config.hidden_size)
@@ -186,10 +190,11 @@ def main():
               pooled_output = self.dense(mean_token_tensor)
               pooled_output = self.activation(pooled_output)
               return pooled_output
-        model.longformer.pooler = CustomLongformerPooler(model.config)
+        model.longformer.pooler = CustomLongformerMeanPooler(model.config)
         print('model mean pooler loaded')
     elif model_args.model_type =='max':
-      class LongformerPooler(nn.Module):
+      logger.info('Instantiate max pooling')
+      class LongformerMeanPooler(nn.Module):
         def __init__(self, config, pooling='max'):
           super().__init__()
           self.dense = nn.Linear(config.hidden_size, config.hidden_size)
@@ -203,11 +208,10 @@ def main():
             pooled_output = self.activation(pooled_output)
             return pooled_output
 
-      model.longformer.pooler = CustomLongformerPooler(model.config)
-      print('model max pooler loaded')
+      model.longformer.pooler = LongformerMeanPooler(model.config)
       
     elif model_args.model_type=="cls":
-      class CustomLongformerPooler(nn.Module):
+      class LongformerCLSPooler(nn.Module):
         def __init__(self, config):
           super().__init__()
           self.dense = nn.Linear(config.hidden_size, config.hidden_size)
@@ -220,10 +224,15 @@ def main():
           pooled_output = self.dense(mean_token_tensor)
           pooled_output = self.activation(pooled_output)
           return pooled_output
-      model.longformer.pooler = CustomLongformerPooler(model.config)
+      model.longformer.pooler = LongformerCLSPooler(model.config)
       print('model cls pooler loaded')
 
 
+    if model_args.freezing=='True':
+      for name, param in model.named_parameters():
+        if name.startswith("longformer."): # choose whatever you like here
+          param.requires_grad = False
+      logging.info('Freeze All Parameters apart from the CLS head')
 
     trainer = Trainer(
     model=model,
