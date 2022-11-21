@@ -17,7 +17,7 @@ from transformers import (
 from transformers import TrainerCallback 
 from datasets import load_metric
 import numpy as np
-
+import transformers
 import logging
 import os
 import random
@@ -41,8 +41,7 @@ from transformers.tokenization_utils_base import BatchEncoding
 from huggingface_hub.hf_api import HfFolder
 HfFolder.save_token('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')
 
-logging.info('Connect to huggingface')
-
+logger = logging.getLogger(__name__)
 @dataclass
 class DataTrainingArguments:
     """
@@ -99,7 +98,26 @@ def main():
     tokenizer = AutoTokenizer.from_pretrained('danielsaggau/longformer_simcse_scotus', use_auth_token=True,use_fast=True)
     model = AutoModelForSequenceClassification.from_pretrained('danielsaggau/longformer_simcse_scotus',use_auth_token=True, num_labels=14)
 
-    logger = logging.getLogger(__name__)
+       # Setup logging
+    logging.basicConfig(
+        format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+        datefmt="%m/%d/%Y %H:%M:%S",
+        handlers=[logging.StreamHandler(sys.stdout)],
+    )
+
+    log_level = training_args.get_process_log_level()
+    logger.setLevel(log_level)
+    transformers.utils.logging.set_verbosity(log_level)
+    transformers.utils.logging.enable_default_handler()
+    transformers.utils.logging.enable_explicit_format()
+
+    # Log on each process the small summary:
+    logger.warning(
+        f"Process rank: {training_args.local_rank}, device: {training_args.device}, n_gpu: {training_args.n_gpu}"
+        + f"distributed training: {bool(training_args.local_rank != -1)}, 16-bits training: {training_args.fp16}"
+    )
+    logger.info(f"Training/evaluation parameters {training_args}")
+
 
     if data_args.pad_to_max_length:
         padding = "max_length"
@@ -111,7 +129,10 @@ def main():
       return tokenizer(examples["text"], truncation=True, padding=padding)
 
 
-    tokenized_data = dataset.map(preprocess_function, batched=True)
+    tokenized_data = dataset.map(
+      preprocess_function,
+      batched=True,
+      desc="tokenizing the entire dataset")
 
     logging.info('Tokenize the data')
 
@@ -127,6 +148,8 @@ def main():
         macro1 = metric1.compute(predictions=predictions, references=labels, average="macro")["f1"]
         accuracy = accuracy.compute(references=labels, predictions=predictions)['accuracy']
         return { "f1-micro": micro1, "f1-macro": macro1, "accuracy": accuracy}
+        logger.info("*** Define accuracy ***")
+
     else: 
       def compute_metrics(eval_pred):
         metric1 = load_metric("f1")
