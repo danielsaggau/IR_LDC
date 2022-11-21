@@ -76,7 +76,7 @@ print(sentence_embeddings)
 
 ### Classification Results
 
-|          Model          | ECTHR B | ECTHR A | SCOTUS |MIMIC |
+|          Model          | ECTHR A | ECTHR B| SCOTUS |MIMIC |
 |:-----------------------:|:-----:|:-:|:-:|:-:|
 | Lexglue Legal Bert  |  TBD | TBD | TBD|TBD|
 | Lexglue Longformer  |  TBD | TBD | TBD|TBD|
