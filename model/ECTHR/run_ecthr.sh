@@ -12,7 +12,7 @@
 #hostname
 echo $CUDA_VISIBLE_DEVICES
 export PYTHONPATH=.
-
+wandb login fd6f7deb3126d40be9abf77ee753bf45f00e2a9a
 python lexglue_longformer.py \
         --output_dir  logs/echtr_b \
         --overwrite_output_dir \
