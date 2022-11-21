@@ -39,8 +39,8 @@ from transformers.utils.versions import require_version
 from transformers.tokenization_utils_base import BatchEncoding
 
 from huggingface_hub.hf_api import HfFolder
-HfFolder.save_token('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')
-
+HfFolder.save_token('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')
+import wandb
 logger = logging.getLogger(__name__)
 @dataclass
 class DataTrainingArguments:
@@ -88,17 +88,17 @@ class ModelArguments:
       default=False, 
       metadata={"help": "compute accuracy in addition to f1 micro and macro"}
     )
+    model_type:Optional[str] = field(
+      default=max,
+      metadata={"help": "determine the type of pooling and model loaded"}
+    )
 def main():
     # See all possible arguments in src/transformers/training_args.py
     # or by passing the --help flag to this script.
     # We now keep distinct sets of args, for a cleaner separation of concerns.
     parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
-
-    tokenizer = AutoTokenizer.from_pretrained('danielsaggau/longformer_simcse_scotus', use_auth_token=True,use_fast=True)
-    model = AutoModelForSequenceClassification.from_pretrained('danielsaggau/longformer_simcse_scotus',use_auth_token=True, num_labels=14)
-
-       # Setup logging
+    
     logging.basicConfig(
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
         datefmt="%m/%d/%Y %H:%M:%S",
@@ -119,6 +119,18 @@ def main():
     logger.info(f"Training/evaluation parameters {training_args}")
 
 
+    if model_args.model_type =='mean':
+      model = AutoModelForSequenceClassification.from_pretrained('danielsaggau/longformer_simcse_scotus',use_auth_token=True, num_labels=14)
+      tokenizer = AutoTokenizer.from_pretrained('danielsaggau/longformer_simcse_scotus', use_auth_token=True,use_fast=True)
+      print('load mean model')
+    elif model_args.model_type =='cls':
+      model = AutoModelForSequenceClassification.from_pretrained('danielsaggau/longformer_simcse_scotus',use_auth_token=True, num_labels=14)
+      tokenizer = AutoTokenizer.from_pretrained('danielsaggau/longformer_simcse_scotus', use_auth_token=True,use_fast=True)
+    elif model_args.model_type =='max':
+      model = AutoModelForSequenceClassification.from_pretrained('danielsaggau/scotus_max_pool',use_auth_token=True, num_labels=14)
+      tokenizer = AutoTokenizer.from_pretrained('danielsaggau/scotus_max_pool', use_auth_token=True,use_fast=True)
+
+
     if data_args.pad_to_max_length:
         padding = "max_length"
     else:
@@ -134,9 +146,6 @@ def main():
       batched=True,
       desc="tokenizing the entire dataset")
 
-    logging.info('Tokenize the data')
-
-
 
     if model_args.compute_accuracy: 
       def compute_metrics(eval_pred):
@@ -148,7 +157,6 @@ def main():
         macro1 = metric1.compute(predictions=predictions, references=labels, average="macro")["f1"]
         accuracy = accuracy.compute(references=labels, predictions=predictions)['accuracy']
         return { "f1-micro": micro1, "f1-macro": macro1, "accuracy": accuracy}
-        logger.info("*** Define accuracy ***")
 
     else: 
       def compute_metrics(eval_pred):
@@ -164,7 +172,7 @@ def main():
     data_collator = DataCollatorWithPadding(tokenizer, pad_to_multiple_of=8) # fp16
     model = AutoModelForSequenceClassification.from_pretrained('danielsaggau/longformer_simcse_scotus',use_auth_token=True, num_labels=14)
 
-    if model_args.do_pooling:
+    if model_args.model_type =='mean':
         class CustomLongformerPooler(nn.Module):
           def __init__(self, config):
              super().__init__()
@@ -178,9 +186,45 @@ def main():
               pooled_output = self.dense(mean_token_tensor)
               pooled_output = self.activation(pooled_output)
               return pooled_output
-
         model.longformer.pooler = CustomLongformerPooler(model.config)
-        print('model pooler loaded')
+        print('model mean pooler loaded')
+    elif model_args.model_type =='max':
+      class LongformerPooler(nn.Module):
+        def __init__(self, config, pooling='max'):
+          super().__init__()
+          self.dense = nn.Linear(config.hidden_size, config.hidden_size)
+          self.pooling = pooling
+          self.activation = nn.Tanh()
+          self.max_sentence_length = 512
+
+        def forward(self, hidden_states):
+            pooled_output = torch.max(hidden_states, dim=1)[0]
+            pooled_output = self.dense(pooled_output)
+            pooled_output = self.activation(pooled_output)
+            return pooled_output
+
+      model.longformer.pooler = CustomLongformerPooler(model.config)
+      print('model max pooler loaded')
+      
+    elif model_args.model_type=="cls":
+      class CustomLongformerPooler(nn.Module):
+        def __init__(self, config):
+          super().__init__()
+          self.dense = nn.Linear(config.hidden_size, config.hidden_size)
+          self.activation = nn.Tanh()
+
+        def forward(self, hidden_states: torch.Tensor) -> torch.Tensor:
+        # We "pool" the model by simply taking the hidden state corresponding
+        # to the first token.
+          mean_token_tensor = hidden_states.mean(dim=1)
+          pooled_output = self.dense(mean_token_tensor)
+          pooled_output = self.activation(pooled_output)
+          return pooled_output
+      model.longformer.pooler = CustomLongformerPooler(model.config)
+      print('model cls pooler loaded')
+
+
+
     trainer = Trainer(
     model=model,
     compute_metrics=compute_metrics,
@@ -191,7 +235,11 @@ def main():
     data_collator=data_collator,    
     callbacks = [EarlyStoppingCallback(early_stopping_patience=5)]
       )
+    wandb.init(project="IR_LDC",name="mean_better_learning_rate")
     trainer.train()
+    trainer.log_metrics("train", metrics)
+    trainer.save_metrics("train", metrics)
+    trainer.save_state()
 
     eval_dataset=tokenized_data['validation']
     trainer.evaluate(eval_dataset=eval_dataset)
