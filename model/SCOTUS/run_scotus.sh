@@ -9,7 +9,7 @@
 #SBATCH --mail-user=daniel.saggau@gmail.com
 #SBATCH --mail-type=ALL
 !wandb login fd6f7deb3126d40be9abf77ee753bf45f00e2a9a
-!python IR_LDC/model/SCOTUS/scotus_clean.py \
+!python scotus_clean.py \
     --output_dir logs/output_1 \
     --load_best_model_at_end \
     --overwrite_output_dir \
