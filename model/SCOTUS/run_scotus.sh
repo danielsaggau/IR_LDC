@@ -3,6 +3,7 @@
 #SBATCH --ntasks=1 --gres=gpu:1 --partition=mcml-dgx-a100-40x8
 #SBATCH --qos=mcml --mem=16GB
 #SBATCH --time=0-07:00:00
+#SBATCH --e scotus.err
 #SBATCH --output=experiments-longformer-ecthr
 #SBATCH --job-name=lexglue-longformer-ecthr
 #SBATCH --mail-user=daniel.saggau@gmail.com
@@ -25,4 +26,5 @@
     --metric_for_best_model "f1-micro" \
     --greater_is_better 1 \
     --report_to 'wandb' \
-    --model_type 'max'
+    --model_type 'max'\
+    --freezing 1
