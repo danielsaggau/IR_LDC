@@ -90,10 +90,6 @@ class ModelArguments:
       default=False,
       metadata={"help": 'Freeze the layers apart from the Classification head (MLP)'}
     )
-    subnetworks: Optional[bool] = field(
-      default=False, 
-      metadata={"help": }
-    )
 def main():
     # See all possible arguments in src/transformers/training_args.py
     # or by passing the --help flag to this script.
