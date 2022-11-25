@@ -116,7 +116,7 @@ def main():
     )
     logger.info(f"Training/evaluation parameters {training_args}")
 
-
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     if model_args.model_type =='mean':
       model = AutoModelForSequenceClassification.from_pretrained('danielsaggau/longformer_simcse_scotus',use_auth_token=True, num_labels=14)
       tokenizer = AutoTokenizer.from_pretrained('danielsaggau/longformer_simcse_scotus', use_auth_token=True,use_fast=True)
@@ -219,11 +219,13 @@ def main():
       logger.info('model cls pooler loaded')
 
     # freezing the body and only leaving the head 
-    if model_args.freezing=='True':
-      for name, param in model.named_parameters():
+    for name, param in model.named_parameters():
         if name.startswith("longformer."): # choose whatever you like here
           param.requires_grad = False
-      logger.info('Freeze All Parameters apart from the CLS head')
+    logger.info('Freeze All Parameters apart from the CLS head')
+
+
+    model = model.to(device)
 
     trainer = Trainer(
     model=model,
@@ -235,7 +237,7 @@ def main():
     data_collator=data_collator,    
     callbacks = [EarlyStoppingCallback(early_stopping_patience=5)]
       )
-    wandb.init(project="IR_LDC",name="mean_better_learning_rate")
+    wandb.init(project="IR_LDC",name="max_lr1e-3_batch12")
     trainer.train()
     trainer.save_state()
 
