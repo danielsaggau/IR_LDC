@@ -19,7 +19,6 @@ python scotus_clean.py \
     --per_device_train_batch_size 6 \
     --per_device_eval_batch_size 6 \
     --weight_decay 0.01 \
-    --push_to_hub \
     --fp16 \
     --num_train_epochs 10 \
     --gradient_accumulation_steps 1 \
@@ -27,4 +26,4 @@ python scotus_clean.py \
     --greater_is_better 1 \
     --report_to 'wandb' \
     --model_type 'max'\
-    --freezing 1
+    --freezing 'True'
