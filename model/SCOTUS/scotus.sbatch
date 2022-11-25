@@ -1,9 +1,9 @@
 #!/bin/bash
 #normal cpu stuff: allocate cpus, memory
 #SBATCH --ntasks=1 --gres=gpu:1 --partition=mcml-dgx-a100-40x8
-#SBATCH --qos=mcml --mem=16GB
+#SBATCH --qos=mcml
 #SBATCH --time=0-07:00:00
-#SBATCH --e scotus.err
+#SBATCH --error scotus.err
 #SBATCH --output=experiments-longformer-ecthr
 #SBATCH --job-name=lexglue-longformer-ecthr
 #SBATCH --mail-user=daniel.saggau@gmail.com
