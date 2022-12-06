@@ -32,8 +32,7 @@ class AddProjection(nn.Module):
        a = self.projection(a)
        return a
 
-
- class BregmanRankingLoss(nn.Module) :
+class BregmanRankingLoss(nn.Module):
   '''
 
   '''
