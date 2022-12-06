@@ -9,7 +9,7 @@ import model.loss.cos_sim
 
 
 class AddProjection(nn.Module):
-   def __init__(self, model: SentenceTransformer, sentence_embedding_dimension:int,k:int,mlp_dim=512,embedding_size=5120):
+   def __init__(self, model: SentenceTransformer, sentence_embedding_dimension:int,k:int,mlp_dim=512,embedding_size=512):
        super(AddProjection, self).__init__()
        self.model = SentenceTransformer('danielsaggau/legal_long_bert')
        embedding_size = embedding_size
