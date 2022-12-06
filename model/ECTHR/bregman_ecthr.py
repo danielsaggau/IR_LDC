@@ -78,6 +78,10 @@ class ModelArguments:
       default=False, 
       metadata={"help": 'number of subnetworks'}
     )
+    patience: Optional[int] = field(
+      default=5,
+      metadata={'help': 'patience parameter for early stopping to determine after how many repetitions to stop'}
+    )
 def main():
     # See all possible arguments in src/transformers/training_args.py
     # or by passing the --help flag to this script.
@@ -109,16 +113,16 @@ def main():
     label_list = list(range(10))
     num_labels = len(label_list)
     
- 
-      if data_args.dataset_selection=="ecthr_a":
+    device = "cuda:0" if torch.cuda.is_available() else "cpu"
+    
+    if data_args.dataset_selection=="ecthr_a":
         dataset = load_dataset("lex_glue", "ecthr_a")
         logger.info('load ecthr_a regular model')
-      elif data_args.dataset_selection=='ecthr_b':
+    elif data_args.dataset_selection=='ecthr_b':
         dataset = load_dataset("lex_glue", "ecthr_b")
         logger.info('load ecthr_b regular model')
-      tokenizer = AutoTokenizer.from_pretrained(model_args.model_name, use_auth_token=True, use_fast=True)
-      model = AutoModelForSequenceClassification.from_pretrained(model_args.model_nam,
-      num_labels=10, problem_type='multi_label_classification')
+    tokenizer = AutoTokenizer.from_pretrained(model_args.model_name, use_auth_token=True, use_fast=True)
+    model = AutoModelForSequenceClassification.from_pretrained(model_args.model_name, num_labels=10 ,problem_type='multi_label_classification').to(device)
 
 
     # set padding to max length   
@@ -171,7 +175,6 @@ def main():
     data_collator = DataCollatorWithPadding(tokenizer, pad_to_multiple_of=8) # fp16
 
     if model_args.model_type =='mean':
-        logger.info('model mean pooler loaded')
         class LongformerMeanPooler(nn.Module):
           def __init__(self, config):
              super().__init__()
@@ -179,11 +182,47 @@ def main():
              self.activation = nn.Tanh()
 
           def forward(self, hidden_states: torch.Tensor) -> torch.Tensor:
+        # We "pool" the model by simply taking the hidden state corresponding
+        # to the first token.
               mean_token_tensor = hidden_states.mean(dim=1)
               pooled_output = self.dense(mean_token_tensor)
               pooled_output = self.activation(pooled_output)
               return pooled_output
-        model.longformer.pooler = LongformerMeanPooler(model.config)
+        model.longformer.pooler = CustomLongformerMeanPooler(model.config)
+        print('model mean pooler loaded')
+    
+    elif model_args.model_type =='max':
+      logger.info('Instantiate max pooling')
+      class LongformerMeanPooler(nn.Module):
+        def __init__(self, config, pooling='max'):
+          super().__init__()
+          self.dense = nn.Linear(config.hidden_size, config.hidden_size)
+          self.pooling = pooling
+          self.activation = nn.Tanh()
+          self.max_sentence_length = 512
+
+        def forward(self, hidden_states):
+            pooled_output = torch.max(hidden_states, dim=1)[0]
+            pooled_output = self.dense(pooled_output)
+            pooled_output = self.activation(pooled_output)
+            return pooled_output
+      model.longformer.pooler = LongformerMeanPooler(model.config)
+      
+    elif model_args.model_type=="cls":
+      class LongformerCLSPooler(nn.Module):
+        def __init__(self, config):
+          super().__init__()
+          self.dense = nn.Linear(config.hidden_size, config.hidden_size)
+          self.activation = nn.Tanh()
+
+        def forward(self, hidden_states: torch.Tensor) -> torch.Tensor:
+
+          mean_token_tensor = hidden_states[:, 0]
+          pooled_output = self.dense(mean_token_tensor)
+          pooled_output = self.activation(pooled_output)
+          return pooled_output
+      model.longformer.pooler = LongformerCLSPooler(model.config)
+      logger.info('model cls pooler loaded')
 
     # freezing the body and only leaving the head 
     if model_args.freezing:
@@ -200,9 +239,9 @@ def main():
     train_dataset=tokenized_data["train"],
     tokenizer=tokenizer,
     data_collator=data_collator,    
-    callbacks = [EarlyStoppingCallback(early_stopping_patience=5)]
+    callbacks = [EarlyStoppingCallback(early_stopping_patience=model_args.patience)]
       )
-    wandb.init(project="IR_LDC",name="ECTHR_frozen")
+    wandb.init(project="IR_LDC",name="ECTHR_bregman")
     trainer.train()
     trainer.log_metrics("train", metrics)
     trainer.save_metrics("train", metrics)
