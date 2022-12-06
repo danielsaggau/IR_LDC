@@ -74,10 +74,6 @@ class ModelArguments:
       default=False,
       metadata={"help": 'Freeze the layers apart from the Classification head (MLP)'}
     )
-    subnetworks: Optional[bool] = field(
-      default=False, 
-      metadata={"help": 'number of subnetworks'}
-    )
     patience: Optional[int] = field(
       default=5,
       metadata={'help': 'patience parameter for early stopping to determine after how many repetitions to stop'}
@@ -241,7 +237,7 @@ def main():
     data_collator=data_collator,    
     callbacks = [EarlyStoppingCallback(early_stopping_patience=model_args.patience)]
       )
-    wandb.init(project="IR_LDC",name="ECTHR_bregman")
+    wandb.init(project="IR_LDC",name="ECTHR_bregman_mean")
     trainer.train()
     trainer.log_metrics("train", metrics)
     trainer.save_metrics("train", metrics)
