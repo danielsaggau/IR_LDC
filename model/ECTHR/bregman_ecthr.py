@@ -239,10 +239,7 @@ def main():
       )
     wandb.init(project="IR_LDC",name="ECTHR_bregman_mean")
     trainer.train()
-    trainer.log_metrics("train", metrics)
-    trainer.save_metrics("train", metrics)
     trainer.save_state()
-
     eval_dataset=tokenized_data['test']
     trainer.evaluate(eval_dataset=eval_dataset)
 
