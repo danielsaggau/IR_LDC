@@ -10,4 +10,4 @@
 #SBATCH --mail-type=ALL
 
 python -c "from huggingface_hub.hf_api import HfFolder; HfFolder.save_token('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')" 
-python /content/IR_LDC/model/SCOTUS/simcse_bregman_scotus.py
+python simcse_bregman_scotus.py
