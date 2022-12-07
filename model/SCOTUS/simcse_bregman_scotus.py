@@ -20,14 +20,6 @@ model_name = 'danielsaggau/legal_long_bert'
 train_batch_size = 2
 max_seq_length = 4096
 
-
-
-
-#Input file path (a text file, each line a sentence)
-if len(sys.argv) < 2:
-    print("Run this script with: python {} path/to/sentences.txt".format(sys.argv[0]))
-    exit()
-
 #filepath = sys.argv[1]
 filepath = "your_file.txt"
 
@@ -90,7 +82,7 @@ def cos_sim(a: Tensor, b: Tensor):
 
 
 class AddProjection(nn.Module):
-   def __init__(self, model: SentenceTransformer, mlp_dim=512,embedding_size=5120): #removed sentence_embedding_dimension
+   def __init__(self, model: SentenceTransformer, mlp_dim=512,embedding_size=512*5): #removed sentence_embedding_dimension
        super(AddProjection, self).__init__()
        self.model = SentenceTransformer('danielsaggau/legal_long_bert')
        embedding_size = embedding_size
@@ -211,9 +203,9 @@ model.fit(train_objectives=[(train_dataloader, train_loss)],
           warmup_steps=warmup_steps,
           steps_per_epoch=5000,
           callback="epoch",
-          output_path='/content/drive/MyDrive/bregman_scotus_k10_ep10',
+          output_path='bregman_scotus_k5_ep10',
           optimizer_params={'lr': 3e-5},
-          checkpoint_path='/content/drive/MyDrive/bregman_scotus_k10_ep10',
+          checkpoint_path='bregman_scotus_k5_ep10',
           show_progress_bar=True,
           checkpoint_save_steps=10000,
           save_best_model=True,
