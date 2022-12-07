@@ -5,11 +5,10 @@ import torch.nn.functional as F
 from torch import nn, Tensor
 from sentence_transformers import SentenceTransformer, LoggingHandler, losses, InputExample,  models
 from torch.utils.data import DataLoader
-import model.loss.cos_sim
-
+from model.loss.cos_sim import cos_sim
 
 class AddProjection(nn.Module):
-   def __init__(self, model: SentenceTransformer, k:int,mlp_dim=512,embedding_size=512): #removed sentence_embedding_dimension
+   def __init__(self, model: SentenceTransformer, mlp_dim=512,embedding_size=5120): #removed sentence_embedding_dimension
        super(AddProjection, self).__init__()
        self.model = SentenceTransformer('danielsaggau/legal_long_bert')
        embedding_size = embedding_size
@@ -19,8 +18,8 @@ class AddProjection(nn.Module):
            nn.Linear(in_features=mlp_dim, out_features=mlp_dim),
            nn.BatchNorm1d(mlp_dim),
            nn.ReLU(),
-           nn.Linear(in_features=mlp_dim, out_features=embedding_size * k),
-           nn.BatchNorm1d(embedding_size * k),
+           nn.Linear(in_features=mlp_dim, out_features=embedding_size),
+           nn.BatchNorm1d(embedding_size),
        )
 
    def forward(self, a: Tensor):
@@ -35,7 +34,7 @@ class BregmanRankingLoss(nn.Module):
   '''
 
   '''
-  def __init__(self, model: SentenceTransformer, sigma, temperature, k, batch_size, lambda1, lambda2 ,feat_dim=512, scale: float = 20.0, similarity_fct = cos_sim):
+  def __init__(self, model: SentenceTransformer, sigma, temperature, batch_size, lambda1, lambda2 ,feat_dim=512, scale: float = 20.0, similarity_fct = cos_sim):
         """
         :param model: SentenceTransformer model
         :param scale: Output of similarity function is multiplied by scale value
@@ -43,7 +42,7 @@ class BregmanRankingLoss(nn.Module):
         """
         super(BregmanRankingLoss, self).__init__()
         self.model = model
-        self.projection = AddProjection(model, self, mlp_dim=feat_dim, k=5)
+        self.projection = AddProjection(self,model)
         self.sigma = sigma
         self.temperature = temperature
         self.batch_size = batch_size
@@ -116,5 +115,3 @@ class BregmanRankingLoss(nn.Module):
         bloss /= N
         loss = self.lambda1* bloss + self.lambda2 * rloss 
         return loss
-
-     
