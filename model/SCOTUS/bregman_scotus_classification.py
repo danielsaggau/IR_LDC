@@ -185,7 +185,7 @@ def main():
               pooled_output = self.dense(mean_token_tensor)
               pooled_output = self.activation(pooled_output)
               return pooled_output
-        model.longformer.pooler = CustomLongformerMeanPooler(model.config)
+        model.longformer.pooler = LongformerMeanPooler(model.config)
         print('model mean pooler loaded')
     
     elif model_args.model_type =='max':
@@ -222,10 +222,11 @@ def main():
       logger.info('model cls pooler loaded')
 
     # freezing the body and only leaving the head 
-    for name, param in model.named_parameters():
-        if name.startswith("longformer."): # choose whatever you like here
-          param.requires_grad = False
-    logger.info('Freeze All Parameters apart from the CLS head')
+   if model_args.freezing: 
+        for name, param in model.named_parameters():
+            if name.startswith("longformer."): # choose whatever you like here
+                param.requires_grad = False
+            logger.info('Freeze All Parameters apart from the CLS head')
 
 
     model = model.to(device)
