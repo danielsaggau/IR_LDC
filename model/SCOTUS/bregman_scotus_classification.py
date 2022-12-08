@@ -234,7 +234,7 @@ def main():
     model=model,
     compute_metrics=compute_metrics,
     args=training_args,
-    eval_dataset=tokenized_data['test'],
+    eval_dataset=tokenized_data['validation'],
     train_dataset=tokenized_data["train"],
     tokenizer=tokenizer,
     data_collator=data_collator,    
@@ -244,8 +244,9 @@ def main():
     trainer.train()
     trainer.save_state()
 
-    eval_dataset=tokenized_data['validation']
-    trainer.evaluate(eval_dataset=eval_dataset)
-
+    eval_dataset=tokenized_data['test']
+    metrics = trainer.evaluate(eval_dataset=eval_dataset)
+    trainer.log_metrics("eval", metrics)
+    trainer.save_metrics("eval", metrics)
 if __name__ == "__main__":
     main()
