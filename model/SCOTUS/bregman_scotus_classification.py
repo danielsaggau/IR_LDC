@@ -169,8 +169,7 @@ def main():
         return { "f1-micro": micro1, "f1-macro": macro1} 
 
     data_collator = DataCollatorWithPadding(tokenizer, pad_to_multiple_of=8) # fp16
-    model = AutoModelForSequenceClassification.from_pretrained('danielsaggau/longformer_simcse_scotus',use_auth_token=True, num_labels=14)
-
+    
     if model_args.model_type =='mean':
         class LongformerMeanPooler(nn.Module):
           def __init__(self, config):
@@ -222,7 +221,7 @@ def main():
       logger.info('model cls pooler loaded')
 
     # freezing the body and only leaving the head 
-   if model_args.freezing: 
+    if model_args.freezing: 
         for name, param in model.named_parameters():
             if name.startswith("longformer."): # choose whatever you like here
                 param.requires_grad = False
