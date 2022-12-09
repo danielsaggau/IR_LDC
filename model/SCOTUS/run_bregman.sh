@@ -5,7 +5,7 @@
 #SBATCH --time=0-07:00:00
 #SBATCH --error scotus.err
 #SBATCH --output=experiments-bregman
-#SBATCH --job-name=bregman-scotus-100k
+#SBATCH --job-name=bregman-scotus-10k-s1
 #SBATCH --mail-user=daniel.saggau@gmail.com
 #SBATCH --mail-type=ALL
 
