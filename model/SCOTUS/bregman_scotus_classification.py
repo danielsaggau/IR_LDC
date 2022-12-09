@@ -119,17 +119,18 @@ def main():
     )
     logger.info(f"Training/evaluation parameters {training_args}")
 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") #set up device
+    
     if model_args.model_type =='mean':
-      model = AutoModelForSequenceClassification.from_pretrained(model_args.model_name,use_auth_token=True, num_labels=14)
+      model = AutoModelForSequenceClassification.from_pretrained(model_args.model_name,use_auth_token=True, num_labels=14).to(device)
       tokenizer = AutoTokenizer.from_pretrained(model_args.model_name, use_auth_token=True,use_fast=True)
       logger.info('load mean model')
     elif model_args.model_type =='cls':
-      model = AutoModelForSequenceClassification.from_pretrained(model_args.model_name, use_auth_token=True, num_labels=14)
+      model = AutoModelForSequenceClassification.from_pretrained(model_args.model_name, use_auth_token=True, num_labels=14).to(device)
       tokenizer = AutoTokenizer.from_pretrained(model_args.model_name, use_auth_token=True,use_fast=True)
       logger.info('load cls model')
     elif model_args.model_type =='max':
-      model = AutoModelForSequenceClassification.from_pretrained(model_args.model_name,use_auth_token=True, num_labels=14)
+      model = AutoModelForSequenceClassification.from_pretrained(model_args.model_name,use_auth_token=True, num_labels=14).to(device)
       tokenizer = AutoTokenizer.from_pretrained(model_args.model_name, use_auth_token=True,use_fast=True)
       logger.info('loading max model')
 
@@ -184,7 +185,7 @@ def main():
               pooled_output = self.dense(mean_token_tensor)
               pooled_output = self.activation(pooled_output)
               return pooled_output
-        model.longformer.pooler = LongformerMeanPooler(model.config)
+        model.longformer.pooler = LongformerMeanPooler(model.config).to(device)
         print('model mean pooler loaded')
     
     elif model_args.model_type =='max':
@@ -202,7 +203,7 @@ def main():
             pooled_output = self.dense(pooled_output)
             pooled_output = self.activation(pooled_output)
             return pooled_output
-      model.longformer.pooler = LongformerMeanPooler(model.config)
+      model.longformer.pooler = LongformerMeanPooler(model.config).to(device)
       
     elif model_args.model_type=="cls":
       class LongformerCLSPooler(nn.Module):
@@ -217,7 +218,7 @@ def main():
           pooled_output = self.dense(mean_token_tensor)
           pooled_output = self.activation(pooled_output)
           return pooled_output
-      model.longformer.pooler = LongformerCLSPooler(model.config)
+      model.longformer.pooler = LongformerCLSPooler(model.config).to(device)
       logger.info('model cls pooler loaded')
 
     # freezing the body and only leaving the head 
