@@ -129,7 +129,10 @@ def main():
       model = AutoModelForSequenceClassification.from_pretrained('danielsaggau/scotus_max_pool',use_auth_token=True, num_labels=14)
       tokenizer = AutoTokenizer.from_pretrained('danielsaggau/scotus_max_pool', use_auth_token=True,use_fast=True)
       logger.info('loading max model')
-
+    elif model_args.model_type =='none':
+      model = AutoModelForSequenceClassification.from_pretrained('danielsaggau/legal_long_bert',use_auth_token=True, num_labels=14)
+      tokenizer = AutoTokenizer.from_pretrained('danielsaggau/legal_long_bert', use_auth_token=True,use_fast=True)
+      logger.info('loading untrained model')
 
     if data_args.pad_to_max_length:
         padding = "max_length"
