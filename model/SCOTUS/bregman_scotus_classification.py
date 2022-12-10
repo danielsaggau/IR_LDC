@@ -1,6 +1,7 @@
 import torch 
 from torch import nn
 import logging
+import os
 from transformers import (
     AutoConfig,
     AutoModelForSequenceClassification,
@@ -12,14 +13,13 @@ from transformers import (
     default_data_collator,
     set_seed,
     EarlyStoppingCallback,
+    TrainerCallback,
     Trainer
 )
-from transformers import TrainerCallback 
 from datasets import load_metric
 import numpy as np
 import transformers
 import logging
-import os
 import random
 import sys
 from dataclasses import dataclass, field
@@ -29,8 +29,11 @@ from sklearn.metrics import f1_score
 from scipy.special import expit
 import glob
 import shutil
-
 from datasets import load_dataset
+
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3,4,5,6,7"
+
 dataset = load_dataset("lex_glue", "scotus")
 
 from transformers.trainer_utils import get_last_checkpoint
@@ -118,8 +121,14 @@ def main():
         + f"distributed training: {bool(training_args.local_rank != -1)}, 16-bits training: {training_args.fp16}"
     )
     logger.info(f"Training/evaluation parameters {training_args}")
-
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") #set up device
+    if torch.cuda.is_available():
+        args.device = torch.device('cuda')
+        #cudnn.deterministic = False
+        #cudnn.benchmark = True
+    else:
+        args.device = torch.device('cpu')
+        
+    #device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") #set up device
     
     if model_args.model_type =='mean':
       model = AutoModelForSequenceClassification.from_pretrained(model_args.model_name,use_auth_token=True, num_labels=14).to(device)
