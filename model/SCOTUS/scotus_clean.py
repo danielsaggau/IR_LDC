@@ -122,7 +122,7 @@ def main():
       tokenizer = AutoTokenizer.from_pretrained('danielsaggau/longformer_simcse_scotus', use_auth_token=True,use_fast=True)
       logger.info('load mean model')
     elif model_args.model_type =='cls':
-      model = AutoModelForSequenceClassification.from_pretrained('danielsaggau/longformer_simcse_scotus',use_auth_token=True, num_labels=14)
+      model = AutoModelForSequenceClassification.from_pretrained('danielsaggau/scotus_simcse_cls',use_auth_token=True, num_labels=14)
       tokenizer = AutoTokenizer.from_pretrained('danielsaggau/longformer_simcse_scotus', use_auth_token=True,use_fast=True)
       logger.info('load cls model')
     elif model_args.model_type =='max':
@@ -224,7 +224,7 @@ def main():
     logger.info('Freeze All Parameters apart from the CLS head')
 
 
-    model = model.to(device)
+    model.to(device)
 
     trainer = Trainer(
     model=model,
@@ -236,7 +236,7 @@ def main():
     data_collator=data_collator,    
     callbacks = [EarlyStoppingCallback(early_stopping_patience=5)]
       )
-    wandb.init(project="IR_LDC",name="max_lr1e-3_batch12")
+    wandb.init(project="IR_LDC",name="pending_name)
     trainer.train()
     trainer.save_state()
 
