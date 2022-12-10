@@ -166,7 +166,6 @@ def main():
         return { "f1-micro": micro1, "f1-macro": macro1} 
 
     data_collator = DataCollatorWithPadding(tokenizer, pad_to_multiple_of=8) # fp16
-    model = AutoModelForSequenceClassification.from_pretrained('danielsaggau/longformer_simcse_scotus',use_auth_token=True, num_labels=14)
 
     if model_args.model_type =='mean':
         class LongformerMeanPooler(nn.Module):
