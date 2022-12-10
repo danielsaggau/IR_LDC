@@ -158,6 +158,8 @@ def main():
       batched=True,
       desc="tokenizing the entire dataset")
 
+    tokenized_data.to(args.device)
+    
     if model_args.compute_accuracy: 
       def compute_metrics(eval_pred):
         metric1 = load_metric("f1")
