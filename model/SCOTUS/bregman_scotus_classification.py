@@ -102,7 +102,7 @@ def main():
     # We now keep distinct sets of args, for a cleaner separation of concerns.
     parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
-    
+    args = parser.parse_args()    
     logging.basicConfig(
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
         datefmt="%m/%d/%Y %H:%M:%S",
@@ -122,11 +122,11 @@ def main():
     )
     logger.info(f"Training/evaluation parameters {training_args}")
     if torch.cuda.is_available():
-        args.device = torch.device('cuda')
+        device = torch.device('cuda')
         #cudnn.deterministic = False
         #cudnn.benchmark = True
     else:
-        args.device = torch.device('cpu')
+        device = torch.device('cpu')
         
     #device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") #set up device
     
