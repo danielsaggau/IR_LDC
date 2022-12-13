@@ -17,7 +17,7 @@ with open('your_file.txt', 'w') as f:
 # Training parameters
 access="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"
 model_name = 'danielsaggau/legal_long_bert'
-train_batch_size = 2
+train_batch_size = 6
 max_seq_length = 4096
 
 #filepath = sys.argv[1]
@@ -190,7 +190,7 @@ class BregmanRankingLoss(nn.Module):
         loss = self.lambda1* bloss + self.lambda2 * rloss 
         return loss
 
-train_loss = BregmanRankingLoss(model=model, batch_size=2,temperature=0.1, sigma=1 ,lambda1=1, lambda2=2) 
+train_loss = BregmanRankingLoss(model=model, batch_size=6,temperature=0.1, sigma=1 ,lambda1=1, lambda2=2) 
 num_epochs=10
 warmup_steps = math.ceil(len(train_dataloader) * num_epochs * 0.1)  # 10% of train data for warm-up
 
@@ -200,11 +200,11 @@ model.fit(train_objectives=[(train_dataloader, train_loss)],
           warmup_steps=warmup_steps,
           steps_per_epoch=5000,
           callback="epoch",
-          output_path='bregman_scotus_k10_s1',
+          output_path='bregman_scotus_k10_b6',
           optimizer_params={'lr': 3e-5},
-          checkpoint_path='bregman_scotus_k10_s1',
+          checkpoint_path='bregman_scotus_k10_b6',
           show_progress_bar=True,
-          checkpoint_save_steps=10000,
+          checkpoint_save_steps=50000,
           save_best_model=True,
           use_amp=True  # Set to True, if your GPU supports FP16 cores
           )
