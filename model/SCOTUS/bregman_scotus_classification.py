@@ -236,7 +236,12 @@ def main():
             if name.startswith("longformer."): # choose whatever you like here
                 param.requires_grad = False
             logger.info('Freeze All Parameters apart from the CLS head')
-
+#for bert
+#    if model_args.freezing: 
+#        for name, param in model.named_parameters():
+#            for param in model.bert.parameters():
+#                param.requires_grad = False
+#        logger.info('Freeze All Parameters apart from the CLS head')
 
     model.to(args.device)
 
