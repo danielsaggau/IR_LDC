@@ -70,14 +70,6 @@ print("Sentence embeddings:")
 print(sentence_embeddings)
 ```
 
-
-## Results 
-
-###Todo
-
-For an automated evaluation of this model, see the *Sentence Embeddings Benchmark*: [https://seb.sbert.net](https://seb.sbert.net?model_name={MODEL_NAME})
-
-
 ## Training
 The model was trained with the parameters:
 
