@@ -148,13 +148,13 @@ def main():
         batch = tokenizer(
             examples["text"],
             padding=padding,
-            max_length=512,
+            max_length=4096,
             truncation=True)
         
         batch = tokenizer.pad(
             batch,
             padding='max_length',
-            max_length=512,
+            max_length=4096,
             pad_to_multiple_of=8,
         )
         batch["label_ids"] = [[1.0 if label in labels else 0.0 for label in label_list] for labels in examples["labels"]]
@@ -169,24 +169,6 @@ def main():
         macro_f1 = f1_score(y_true=label_ids, y_pred=preds, average='macro', zero_division=0)
         micro_f1 = f1_score(y_true=label_ids, y_pred=preds, average='micro', zero_division=0)
         return {'macro_f1': macro_f1, 'micro_f1': micro_f1}
-
-
-    training_args = TrainingArguments(
-    output_dir="/biobert_mimic_classification_bregman_Tuned",
-    learning_rate=1e-3,
-    per_device_train_batch_size=6,
-    per_device_eval_batch_size=6,
-    num_train_epochs=20,
-    weight_decay=0.01,
-    save_strategy="epoch",
-    evaluation_strategy="epoch",
-    fp16=True,
-    push_to_hub=True,
-    metric_for_best_model="micro_f1",
-    greater_is_better=True,
-    load_best_model_at_end = True,
-    report_to="wandb",
-    run_name="mimic_bregman_biobert")
 
 #Bert pooling
 
@@ -203,10 +185,10 @@ def main():
               pooled_output = self.dense(mean_token_tensor)
               pooled_output = self.activation(pooled_output)
               return pooled_output
-    model.bert.pooler = BertMeanPooler(model.config)
+    model.longformer.pooler = BertMeanPooler(model.config)
     print('model mean pooler loaded')
     if model_args.freezing: 
-      for param in model.bert.parameters():
+      for param in model.longformer.parameters():
           param.requires_grad = False
 
     tune = Trainer(
