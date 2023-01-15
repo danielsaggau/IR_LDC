@@ -127,7 +127,7 @@ def main():
     else:
         args.device = torch.device('cpu')
       
-    model = AutoModelForSequenceClassification.from_pretrained(model_args.model_name,use_auth_token=True, num_labels=14).to(args.device)
+    model = AutoModelForSequenceClassification.from_pretrained(model_args.model_name,use_auth_token=True, num_labels=19).to(args.device)
     tokenizer = AutoTokenizer.from_pretrained(model_args.model_name, use_auth_token=True,use_fast=True)
     logger.info('load mean model')  
 
