@@ -92,7 +92,7 @@ class ModelArguments:
       default = 'content/IR_LDC/models/bio-longformer', metadata={'help': ' name of the model path'}
     )
     freezing: Optional[bool] = field(
-      default=False,
+      default=True,
       metadata={"help": 'Freeze the layers apart from the Classification head (MLP)'}
     )
 def main():
