@@ -82,6 +82,22 @@ def cos_sim(a: Tensor, b: Tensor):
 
 
 class AddProjection(nn.Module):
+    '''
+    Projector function
+
+    Parameters
+    _________________
+    model: sentence transformer
+
+    mlp_dim: int, default=512
+
+    embedding_size: int, 5120
+                    Projector with factor 10
+    Returns
+    _________________
+    model: sentence transformer with projector
+
+    '''
    def __init__(self, model: SentenceTransformer, mlp_dim=512,embedding_size=512*10): #removed sentence_embedding_dimension
        super(AddProjection, self).__init__()
        self.model = SentenceTransformer('danielsaggau/legal_long_bert')
@@ -106,7 +122,7 @@ class AddProjection(nn.Module):
 
 class BregmanRankingLoss(nn.Module):
   '''
-
+    Implementation of new loss function combining bregman and multiple negative ranking loss.
   '''
   def __init__(self, model: SentenceTransformer, sigma, temperature, batch_size, lambda1, lambda2 ,feat_dim=512, scale: float = 20.0, similarity_fct = cos_sim):
         """
@@ -139,6 +155,11 @@ class BregmanRankingLoss(nn.Module):
         return mask
 
   def b_sim(self, features):
+      '''
+      Batch similarity function
+      :param features:
+      :return: similarity matrix and number of active subnetworks
+      '''
         mm = torch.max(features, dim=1)
         indx_max_features = mm[1]
         max_features = mm[0].reshape(-1, 1)
@@ -154,7 +175,9 @@ class BregmanRankingLoss(nn.Module):
         return sim_matrix, num_max
 
   def forward(self, sentence_features: Iterable[Dict[str, Tensor]], labels: Tensor):
-
+    '''
+    forward pass with the combined losses
+    '''
         reps = [self.model(sentence_feature)['sentence_embedding'] for sentence_feature in sentence_features] # get output main model
         embeddings_a = reps[0] 
         embeddings_b = torch.cat(reps[1:])
