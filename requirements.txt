@@ -1,4 +1,5 @@
-transformers==4.28.1
+#transformers==4.28.1
+transformers>=4.38.0
 datasets==2.11.0
 numpy==1.24.2
 pandas==2.0.0
