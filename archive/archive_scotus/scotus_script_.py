@@ -1,5 +1,5 @@
 !pip install huggingface_hub
-!python -c "from huggingface_hub.hf_api import HfFolder; HfFolder.save_token('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')"
+#!python -c "from huggingface_hub.hf_api import HfFolder; HfFolder.save_token('XXXX')"
 from datasets import load_dataset
 from torch.utils.data import DataLoader
 import math

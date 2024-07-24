@@ -3,7 +3,8 @@ from datasets import load_dataset
 dataset = load_dataset("lex_glue", "ecthr_a")
 
 
-!python -c "from huggingface_hub.hf_api import HfFolder; HfFolder.save_token('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')"
+# !python -c "from huggingface_hub.hf_api import HfFolder; HfFolder.save_token(XXXX)" insert token here
+
 tokenizer = AutoTokenizer.from_pretrained("danielsaggau/simcse_longformer_ecthr_b", use_auth_token=True, use_fast=True)
 model = AutoModelForSequenceClassification.from_pretrained("danielsaggau/simcse_longformer_ecthr_b", num_labels=10, problem_type='multi_label_classification')
 

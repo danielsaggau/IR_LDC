@@ -22,7 +22,7 @@ from datasets import load_dataset
 dataset = load_dataset("lex_glue", "scotus")
 
 from huggingface_hub.hf_api import HfFolder
-HfFolder.save_token('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')
+HfFolder.save_token('XXXX')
 
 logging.info('Connect to huggingface')
 

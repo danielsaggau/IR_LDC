@@ -12,7 +12,7 @@
 #hostname
 echo $CUDA_VISIBLE_DEVICES
 export PYTHONPATH=.
-wandb login fd6f7deb3126d40be9abf77ee753bf45f00e2a9a
+# wandb login XXXX credentials here 
 !python /content/IR_LDC/model/ECTHR/bregman_ecthr.py \
     --output_dir logs/output_1 \
     --model_name 'danielsaggau/bregman_ecthrb_k_10_ep1' \

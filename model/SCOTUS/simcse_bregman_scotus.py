@@ -46,7 +46,7 @@ train_dataloader = DataLoader(train_samples, shuffle=True, batch_size=train_batc
 
 
 
-!python -c "from huggingface_hub.hf_api import HfFolder; HfFolder.save_token('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')" 
+#!python -c "from huggingface_hub.hf_api import HfFolder; HfFolder.save_token('XXXX')" 
 
 
 import torch 

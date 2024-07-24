@@ -9,5 +9,5 @@
 #SBATCH --mail-user=daniel.saggau@gmail.com
 #SBATCH --mail-type=ALL
 
-python -c "from huggingface_hub.hf_api import HfFolder; HfFolder.save_token('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')" 
+python -c "from huggingface_hub.hf_api import HfFolder; HfFolder.save_token('XXXX')" 
 python simcse_bregman_scotus.py
