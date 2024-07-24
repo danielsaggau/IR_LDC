@@ -9,7 +9,7 @@
 #SBATCH --mail-user=daniel.saggau@gmail.com
 #SBATCH --mail-type=ALL
 GPU_NUMBER=1
-wandb login fd6f7deb3126d40be9abf77ee753bf45f00e2a9a
+wandb login 
 CUDA_VISIBLE_DEVICES=${GPU_NUMBER} python bregman_scotus_classification.py \
     --output_dir logs/output_1 \
     --model_name 'danielsaggau/bregman_scotus_k8_ep10' \

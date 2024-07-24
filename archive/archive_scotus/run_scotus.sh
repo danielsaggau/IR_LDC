@@ -8,7 +8,7 @@
 #SBATCH --job-name=lexglue-longformer-ecthr
 #SBATCH --mail-user=daniel.saggau@gmail.com
 #SBATCH --mail-type=ALL
-wandb login fd6f7deb3126d40be9abf77ee753bf45f00e2a9a
+wandb login 
 python scotus_clean.py \
     --output_dir logs/output_1 \
     --load_best_model_at_end \
