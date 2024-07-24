@@ -41,7 +41,7 @@ with gzip.open(sts_dataset_path, 'rt', encoding='utf8') as fIn:
 
 train_dataloader = DataLoader(train_samples, shuffle=True, batch_size=train_batch_size)
 
-access="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"
+access="XXXX"
 model = SentenceTransformer('danielsaggau/legal_long_bert',use_auth_token=access)
 
 

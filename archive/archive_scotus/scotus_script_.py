@@ -55,7 +55,7 @@ with open('your_file.txt', 'w') as f:
         f.write(f"{line}\n")
 
 # Training parameters
-access="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"
+access="XXXX"
 model_name = 'danielsaggau/legal_long_bert'
 train_batch_size = 6
 max_seq_length = 4096

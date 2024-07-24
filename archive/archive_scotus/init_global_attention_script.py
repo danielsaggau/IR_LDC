@@ -42,7 +42,7 @@ from transformers.utils.versions import require_version
 from transformers.tokenization_utils_base import BatchEncoding
 
 from huggingface_hub.hf_api import HfFolder
-HfFolder.save_token('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')
+HfFolder.save_token('XXXX')
 import wandb
 logger = logging.getLogger(__name__)
 @dataclass

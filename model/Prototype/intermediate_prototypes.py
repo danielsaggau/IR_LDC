@@ -22,7 +22,7 @@ from transformers.pipelines.pt_utils import KeyDataset
 
 pipe = pipeline('feature-extraction', 
                       'danielsaggau/longformer_simcse_scotus', 
-                      use_auth_token='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')
+                      use_auth_token='XXXX')
 from tqdm.auto import tqdm
 
 for t0 in tqdm(pipe(KeyDataset(train_0, "text"), batch_size=32, truncation=True)):
