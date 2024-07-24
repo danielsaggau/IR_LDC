@@ -112,11 +112,12 @@ SentenceTransformer(
 ```
 
 ## Citing & Authors
-
+```
 @article{saggau2023efficient,
   title={Efficient Document Embeddings via Self-Contrastive Bregman Divergence Learning},
   author={Saggau, Daniel and Rezaei, Mina and Bischl, Bernd and Chalkidis, Ilias},
   journal={arXiv preprint arXiv:2305.16031},
   year={2023}
 }
+```
 <!--- Describe where people can find more information -->
